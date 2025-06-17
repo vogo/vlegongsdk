@@ -19,10 +19,10 @@ package cores
 
 import (
 	"bytes"
-	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"time"
 
@@ -30,44 +30,9 @@ import (
 	"github.com/vogo/vogo/vlog"
 )
 
-// Client 客户端
-type Client struct {
-	config      *Config
-	httpClient  *http.Client
-	privateKey  *rsa.PrivateKey
-	platformKey *rsa.PublicKey
-}
-
-// NewClient 创建一个新的客户端
-func NewClient(config *Config) (*Client, error) {
-	// 解析私钥
-	privateKey, err := ParsePrivateKey(config.PrivateKey)
-	if err != nil {
-		return nil, fmt.Errorf("解析私钥失败: %w", err)
-	}
-
-	// 解析平台公钥
-	platformKey, err := ParsePublicKey(config.PlatformPublicKey)
-	if err != nil {
-		return nil, fmt.Errorf("解析平台公钥失败: %w", err)
-	}
-
-	// 创建HTTP客户端
-	httpClient := &http.Client{
-		Timeout: time.Duration(config.Timeout) * time.Second,
-	}
-
-	return &Client{
-		config:      config,
-		httpClient:  httpClient,
-		privateKey:  privateKey,
-		platformKey: platformKey,
-	}, nil
-}
-
-// DoRequest 发送请求并处理响应
-func (c *Client) DoRequest(path string, reqData interface{}, respData interface{}) error {
-	vlog.Infof("DoRequest path: %s, reqData: %s", path, vjson.EnsureMarshal(reqData))
+// DoMultipartRequestWithBytes 使用字节数组发送multipart/form-data请求并处理响应
+func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, fileBytes []byte, fileName string, respData interface{}) error {
+	vlog.Infof("DoMultipartRequestWithBytes path: %s, reqData: %v, fileName: %s", path, vjson.EnsureMarshal(reqData), fileName)
 
 	// 创建请求
 	req := NewRequest(c.config)
@@ -101,26 +66,66 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	req.Head.Sign = sign
 
-	// 序列化请求
-	reqBytes, err := json.Marshal(req)
+	// 序列化请求头和请求体为JSON字符串
+	headBytes, err := json.Marshal(req.Head)
 	if err != nil {
-		return fmt.Errorf("序列化请求失败: %w", err)
+		return fmt.Errorf("序列化请求头失败: %w", err)
 	}
 
-	// 发送HTTP请求
+	bodyBytes, err := json.Marshal(req.Body)
+	if err != nil {
+		return fmt.Errorf("序列化请求体失败: %w", err)
+	}
+
+	// 创建multipart/form-data请求
 	url := fmt.Sprintf("%s%s", c.config.BaseURL, path)
 
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
+	// 创建multipart writer
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// 添加head字段
+	if err = writer.WriteField("head", string(headBytes)); err != nil {
+		return fmt.Errorf("写入head字段失败: %w", err)
+	}
+
+	// 添加body字段
+	if err = writer.WriteField("body", string(bodyBytes)); err != nil {
+		return fmt.Errorf("写入body字段失败: %w", err)
+	}
+
+	// 添加文件
+	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
-		vlog.Errorf("创建HTTP请求失败: %v, request: %s", err, reqBytes)
+		return fmt.Errorf("创建文件表单字段失败: %w", err)
+	}
+
+	if _, err = part.Write(fileBytes); err != nil {
+		return fmt.Errorf("写入文件内容失败: %w", err)
+	}
+
+	// 关闭writer
+	if err = writer.Close(); err != nil {
+		return fmt.Errorf("关闭multipart writer失败: %w", err)
+	}
+
+	// 创建HTTP请求
+	httpReq, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		vlog.Errorf("创建HTTP请求失败: %v", err)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
-	httpReq.Header.Set("Content-Type", "application/json;charset=utf-8")
+	httpReq.Header.Set("Content-Type", writer.FormDataContentType())
 
-	httpResp, err := c.httpClient.Do(httpReq)
+	// 发送HTTP请求
+	httpClient := &http.Client{
+		Timeout: time.Duration(c.config.Timeout) * time.Second,
+	}
+
+	httpResp, err := httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("发送HTTP请求失败: %v, request: %s", err, reqBytes)
+		vlog.Errorf("发送HTTP请求失败: %v", err)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
 	defer httpResp.Body.Close()
@@ -168,7 +173,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
-		vlog.Infof("DoRequest respData: %s", decryptedData)
+		vlog.Infof("DoMultipartRequestWithBytes respData: %s", decryptedData)
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
@@ -178,41 +183,4 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	}
 
 	return nil
-}
-
-// responseToMap 将响应转换为map，用于验签
-func (c *Client) responseToMap(resp Response) (map[string]interface{}, error) {
-	result := make(map[string]interface{})
-
-	// 处理head
-	headBytes, err := json.Marshal(resp.Head)
-	if err != nil {
-		return nil, err
-	}
-
-	var headMap map[string]interface{}
-	if err := json.Unmarshal(headBytes, &headMap); err != nil {
-		return nil, err
-	}
-
-	for k, v := range headMap {
-		result[k] = v
-	}
-
-	// 处理body
-	bodyBytes, err := json.Marshal(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var bodyMap map[string]interface{}
-	if err := json.Unmarshal(bodyBytes, &bodyMap); err != nil {
-		return nil, err
-	}
-
-	for k, v := range bodyMap {
-		result[k] = v
-	}
-
-	return result, nil
 }

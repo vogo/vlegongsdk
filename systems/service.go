@@ -26,7 +26,7 @@ type SystemService struct {
 	client *cores.Client
 }
 
-// NewSystemService 创建一个新的系统服务
+// NewSystemService 创建系统服务
 func NewSystemService(client *cores.Client) *SystemService {
 	return &SystemService{
 		client: client,

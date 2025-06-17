@@ -176,7 +176,7 @@ func Decrypt(data string, privateKey *rsa.PrivateKey) (string, error) {
 		offset += maxDecryptBlock
 	}
 
-	return string(buffer.Bytes()), nil
+	return buffer.String(), nil
 }
 
 // BuildSignString 构建待签名字符串
@@ -203,7 +203,7 @@ func BuildSignString(params map[string]interface{}) string {
 		if v == nil {
 			continue
 		}
-		
+
 		// 转换为字符串并检查是否为空
 		valueStr := fmt.Sprintf("%v", v)
 		if valueStr == "" {

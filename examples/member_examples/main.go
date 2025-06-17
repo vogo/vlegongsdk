@@ -47,22 +47,22 @@ func main() {
 	memberService := members.NewMemberService(client)
 
 	// 示例：注册用工人员
-	//registerExample(memberService)
+	// registerExample(memberService)
 
 	// 示例：查询用工人员信息
-	getInfoExample(memberService)
+	// getInfoExample(memberService)
 
 	// 示例：绑定银行卡
-	//addBankCardExample(memberService)
+	// addBankCardExample(memberService)
 
 	// // 示例：解绑银行卡
-	//unbindBankCardExample(memberService)
+	// unbindBankCardExample(memberService)
 
 	// // 示例：采集用工人员身份证
-	// idCardAuthExample(memberService)
+	idCardAuthExample(memberService)
 
 	// // 示例：注销用工人员
-	//dismissExample(memberService)
+	// dismissExample(memberService)
 }
 
 // 注册用工人员示例
@@ -165,9 +165,9 @@ func idCardAuthExample(memberService *members.MemberService) {
 	// 创建采集用工人员身份证请求
 	// 注意：需要先通过文件上传接口上传身份证正反面照片，获取图片ID
 	req := &members.IDCardAuthRequest{
-		FreelancerID: vos.EnsureEnvInt("LEGONG_FREELANCER_ID"), // 替换为实际的用工人员编号
-		FrontImgID:   "front_img_id",                           // 替换为实际的身份证人像面照片ID
-		BackImgID:    "back_img_id",                            // 替换为实际的身份证国徽面照片ID
+		FreelancerID: vos.EnsureEnvInt("LEGONG_FREELANCER_ID"),   // 替换为实际的用工人员编号
+		FrontImgID:   vos.EnsureEnvString("LEGONG_IDCARD_FRONT"), // 替换为实际的身份证人像面照片ID
+		BackImgID:    vos.EnsureEnvString("LEGONG_IDCARD_BACK"),  // 替换为实际的身份证国徽面照片ID
 	}
 
 	// 发送请求
@@ -196,7 +196,7 @@ func dismissExample(memberService *members.MemberService) {
 	}
 
 	// 打印响应
-	fmt.Printf("用工人员编号: %s\n", resp.FreelancerID)
+	fmt.Printf("用工人员编号: %d\n", resp.FreelancerID)
 	if resp.IsDismissed == "1" {
 		fmt.Println("注销成功")
 	} else {
