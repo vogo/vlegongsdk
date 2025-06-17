@@ -15,25 +15,29 @@
  * limitations under the License.
  */
 
-// Package settlements 提供结算相关功能
-package settlements
+package examples
 
 import (
-	"fmt"
+	"github.com/vogo/vlegongsdk/cores"
+	"github.com/vogo/vogo/vlog"
+	"github.com/vogo/vogo/vos"
 )
 
-// QueryOrderRequest 订单查询请求
-type QueryOrderRequest struct {
-	OutOrderNo string `json:"outOrderNo"` // 外部订单号
-}
+func LoadClient() *cores.Client {
+	// 创建配置
+	config := cores.NewConfig(
+		vos.EnsureEnvString("LEGONG_API_URL"),     // 替换为实际的API地址
+		vos.EnsureEnvString("LEGONG_ORG_CODE"),    // 替换为实际的机构编号
+		vos.EnsureEnvString("LEGONG_TENANT_CODE"), // 替换为实际的租户编码
+		vos.EnsureEnvString("LEGONG_PRIVATE_KEY"), // 替换为实际的私钥
+		vos.EnsureEnvString("LEGONG_PUBLIC_KEY"),  // 替换为实际的平台公钥
+	)
 
-// QueryOrder 查询订单
-func (s *SettlementService) QueryOrder(req *QueryOrderRequest) (*Order, error) {
-	var resp Order
-	err := s.client.DoRequest("/settlement/settleApi/query", req, &resp)
+	// 创建客户端
+	client, err := cores.NewClient(config)
 	if err != nil {
-		return nil, fmt.Errorf("查询订单失败: %w", err)
+		vlog.Fatalf("创建客户端失败: %v", err)
 	}
 
-	return &resp, nil
+	return client
 }

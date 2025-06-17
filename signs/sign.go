@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package settlements
+package signs
 
 import "fmt"
 
@@ -40,7 +40,7 @@ type StartSignResponse struct {
 }
 
 // StartSign 发起自主签约
-func (s *SettlementService) StartSign(req *StartSignRequest) (*StartSignResponse, error) {
+func (s *SignService) StartSign(req *StartSignRequest) (*StartSignResponse, error) {
 	var resp StartSignResponse
 	err := s.client.DoRequest("/settlement/signApi/startSign", req, &resp)
 	if err != nil {

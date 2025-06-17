@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package settlements
+package signs
 
 import "fmt"
 
@@ -47,7 +47,7 @@ type QuerySignRecordResponse struct {
 }
 
 // QuerySignRecord 查询签约记录
-func (s *SettlementService) QuerySignRecord(req *QuerySignRecordRequest) (*QuerySignRecordResponse, error) {
+func (s *SignService) QuerySignRecord(req *QuerySignRecordRequest) (*QuerySignRecordResponse, error) {
 	var resp QuerySignRecordResponse
 	err := s.client.DoRequest("/settlement/signApi/querySignRecord", req, &resp)
 	if err != nil {

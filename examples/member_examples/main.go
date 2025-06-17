@@ -21,33 +21,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/vogo/vlegongsdk/cores"
+	"github.com/vogo/vlegongsdk/examples"
 	"github.com/vogo/vlegongsdk/members"
 	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vos"
 )
 
 func main() {
-	// 创建配置
-	config := cores.NewConfig(
-		vos.EnsureEnvString("LEGONG_API_URL"),     // 替换为实际的API地址
-		vos.EnsureEnvString("LEGONG_ORG_CODE"),    // 替换为实际的机构编号
-		vos.EnsureEnvString("LEGONG_TENANT_CODE"), // 替换为实际的租户编码
-		vos.EnsureEnvString("LEGONG_PRIVATE_KEY"), // 替换为实际的私钥
-		vos.EnsureEnvString("LEGONG_PUBLIC_KEY"),  // 替换为实际的平台公钥
-	)
-
-	// 创建客户端
-	client, err := cores.NewClient(config)
-	if err != nil {
-		vlog.Fatalf("创建客户端失败: %v", err)
-	}
+	client := examples.LoadClient()
 
 	// 创建成员服务
 	memberService := members.NewMemberService(client)
 
 	// 示例：注册用工人员
-	// registerExample(memberService)
+	registerExample(memberService)
 
 	// 示例：查询用工人员信息
 	// getInfoExample(memberService)
@@ -59,7 +46,7 @@ func main() {
 	// unbindBankCardExample(memberService)
 
 	// // 示例：采集用工人员身份证
-	idCardAuthExample(memberService)
+	// idCardAuthExample(memberService)
 
 	// // 示例：注销用工人员
 	// dismissExample(memberService)

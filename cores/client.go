@@ -142,6 +142,10 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		vlog.Errorf("解析响应失败: %v, body: %s", err, respBytes)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
+	// 检查响应码
+	if resp.Body.Code != "00000" {
+		return fmt.Errorf("请求失败: %s - %s", resp.Body.Code, resp.Body.Msg)
+	}
 
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
@@ -152,12 +156,8 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	signStr = BuildSignString(respMap)
 	if err := Verify(signStr, resp.Head.Sign, c.platformKey); err != nil {
+		vlog.Errorf("验证签名失败: %v, response: %s, signStr: %s", err, respBytes, signStr)
 		return fmt.Errorf("验证签名失败: %w", err)
-	}
-
-	// 检查响应码
-	if resp.Body.Code != "00000" {
-		return fmt.Errorf("请求失败: %s - %s", resp.Body.Code, resp.Body.Msg)
 	}
 
 	if respData != nil {

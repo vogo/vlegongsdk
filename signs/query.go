@@ -15,24 +15,29 @@
  * limitations under the License.
  */
 
-// Package settlements 提供结算相关功能
-package settlements
+package signs
 
-import (
-	"fmt"
-)
+import "fmt"
 
-// QueryOrderRequest 订单查询请求
-type QueryOrderRequest struct {
-	OutOrderNo string `json:"outOrderNo"` // 外部订单号
+// QuerySignRequest 签约查询请求
+type QuerySignRequest struct {
+	SignFlowID string `json:"signFlowId"` // 签约流程ID
 }
 
-// QueryOrder 查询订单
-func (s *SettlementService) QueryOrder(req *QueryOrderRequest) (*Order, error) {
-	var resp Order
-	err := s.client.DoRequest("/settlement/settleApi/query", req, &resp)
+// QuerySignResponse 签约查询响应
+type QuerySignResponse struct {
+	SignFlowID  string `json:"signFlowId"`  // 签约流程ID
+	SignStatus  int    `json:"signStatus"`  // 签约状态 0 签署中 1 已签约 2 拒签 3 过期 4 失败
+	SignEndTime string `json:"signEndTime"` // 签署完成时间，格式：yyyy-MM-dd HH:mm:ss
+	SignDesc    string `json:"signDesc"`    // 签署描述
+}
+
+// QuerySign 查询签约状态
+func (s *SignService) QuerySign(req *QuerySignRequest) (*QuerySignResponse, error) {
+	var resp QuerySignResponse
+	err := s.client.DoRequest("/settlement/signApi/query", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询订单失败: %w", err)
+		return nil, fmt.Errorf("查询签约状态失败: %w", err)
 	}
 
 	return &resp, nil

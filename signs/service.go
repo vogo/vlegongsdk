@@ -15,25 +15,34 @@
  * limitations under the License.
  */
 
-// Package settlements 提供结算相关功能
-package settlements
+package signs
 
 import (
-	"fmt"
+	"github.com/vogo/vlegongsdk/cores"
 )
 
-// QueryOrderRequest 订单查询请求
-type QueryOrderRequest struct {
-	OutOrderNo string `json:"outOrderNo"` // 外部订单号
+// SignService 签约服务
+type SignService struct {
+	client *cores.Client
+	// 签约回调处理器
+	signCallbackHandler *SignCallbackHandler
 }
 
-// QueryOrder 查询订单
-func (s *SettlementService) QueryOrder(req *QueryOrderRequest) (*Order, error) {
-	var resp Order
-	err := s.client.DoRequest("/settlement/settleApi/query", req, &resp)
-	if err != nil {
-		return nil, fmt.Errorf("查询订单失败: %w", err)
+// NewSignService 创建一个新的签约服务
+func NewSignService(client *cores.Client, signCallbackHandler cores.CallbackHandler[SignCallbackRequest]) *SignService {
+	service := &SignService{
+		client: client,
 	}
 
-	return &resp, nil
+	// 如果提供了回调处理器，则创建签约回调处理器
+	if signCallbackHandler != nil {
+		service.signCallbackHandler = NewSignCallbackHandler(client, signCallbackHandler)
+	}
+
+	return service
+}
+
+// GetSignCallbackHandler 获取签约回调处理器
+func (s *SignService) GetSignCallbackHandler() *SignCallbackHandler {
+	return s.signCallbackHandler
 }

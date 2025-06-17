@@ -23,34 +23,22 @@ import (
 	"net/http"
 
 	"github.com/vogo/vlegongsdk/cores"
-	"github.com/vogo/vlegongsdk/settlements"
+	"github.com/vogo/vlegongsdk/examples"
+	"github.com/vogo/vlegongsdk/signs"
 	"github.com/vogo/vogo/vlog"
 )
 
 func main() {
-	// 创建配置
-	config := cores.NewConfig(
-		"https://api.example.com", // 替换为实际的API地址
-		"V00001",                  // 替换为实际的机构编号
-		"uptest",                  // 替换为实际的租户编码
-		"-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----", // 替换为实际的私钥
-		"-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",           // 替换为实际的平台公钥
-	)
-
-	// 创建客户端
-	client, err := cores.NewClient(config)
-	if err != nil {
-		vlog.Fatalf("创建客户端失败: %v", err)
-	}
+	client := examples.LoadClient()
 
 	// 创建自定义回调处理函数
-	callbackHandler := cores.CallbackHandlerFunc[settlements.SignCallbackRequest](handleSignCallback)
+	callbackHandler := cores.CallbackHandlerFunc[signs.SignCallbackRequest](handleSignCallback)
 
 	// 创建结算服务，并传入回调处理函数
-	settlementService := settlements.NewSettlementService(client, callbackHandler)
+	service := signs.NewSignService(client, callbackHandler)
 
 	// 获取签约回调处理器
-	signCallbackHandler := settlementService.GetSignCallbackHandler()
+	signCallbackHandler := service.GetSignCallbackHandler()
 	if signCallbackHandler == nil {
 		vlog.Fatal("签约回调处理器为空")
 	}
@@ -66,12 +54,12 @@ func main() {
 }
 
 // handleSignCallback 处理签约回调
-func handleSignCallback(data settlements.SignCallbackRequest) error {
+func handleSignCallback(data signs.SignCallbackRequest) error {
 	// 处理签约回调
 	vlog.Infof("收到签约回调: 流程ID=%s, 状态=%d(%s), 完成时间=%s, 描述=%s",
 		data.SignFlowID,
 		data.SignStatus,
-		settlements.GetSignStatusDesc(data.SignStatus),
+		signs.GetSignStatusDesc(data.SignStatus),
 		data.SignEndTime,
 		data.SignDesc,
 	)

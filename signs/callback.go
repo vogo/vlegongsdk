@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package settlements
+package signs
 
 import (
 	"fmt"
