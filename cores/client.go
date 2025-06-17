@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"crypto/rsa"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -71,24 +70,10 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	vlog.Infof("DoRequest path: %s, reqData: %s", path, vjson.EnsureMarshal(reqData))
 
 	// 创建请求
-	req := NewRequest(c.config, reqData)
-
-	// 签名
-	reqMap, err := req.ToMap()
-	if err != nil {
-		return fmt.Errorf("转换请求为map失败: %w", err)
-	}
-
-	signStr := BuildSignString(reqMap)
-	sign, err := Sign(signStr, c.privateKey)
-	if err != nil {
-		return fmt.Errorf("签名失败: %w", err)
-	}
-
-	req.Head.Sign = sign
+	req := NewRequest(c.config)
 
 	// 加密请求体
-	reqBodyBytes, err := json.Marshal(req.Body.Data)
+	reqBodyBytes, err := json.Marshal(reqData)
 	if err != nil {
 		return fmt.Errorf("序列化请求体失败: %w", err)
 	}
@@ -98,8 +83,23 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		return fmt.Errorf("加密请求体失败: %w", err)
 	}
 
-	// 替换加密后的数据
+	// 设置加密后的数据
 	req.Body.Data = encryptedData
+
+	// 签名
+	reqMap, err := req.ToMap()
+	if err != nil {
+		return fmt.Errorf("转换请求为map失败: %w", err)
+	}
+
+	signStr := BuildSignString(reqMap)
+
+	sign, err := Sign(signStr, c.privateKey)
+	if err != nil {
+		return fmt.Errorf("签名失败: %w", err)
+	}
+
+	req.Head.Sign = sign
 
 	// 序列化请求
 	reqBytes, err := json.Marshal(req)
@@ -107,10 +107,14 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		return fmt.Errorf("序列化请求失败: %w", err)
 	}
 
+	vlog.Infof("request body: %s", reqBytes)
+
 	// 发送HTTP请求
 	url := fmt.Sprintf("%s%s", c.config.BaseURL, path)
+
 	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
 	if err != nil {
+		vlog.Errorf("创建HTTP请求失败: %v, request: %s", err, reqBytes)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -118,6 +122,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
+		vlog.Errorf("发送HTTP请求失败: %v, request: %s", err, reqBytes)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
 	defer httpResp.Body.Close()
@@ -128,15 +133,22 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		return fmt.Errorf("读取响应失败: %w", err)
 	}
 
+	if httpResp.StatusCode != http.StatusOK {
+		vlog.Errorf("response status: %s, body: %s", httpResp.Status, respBytes)
+		return fmt.Errorf("请求失败: %s", httpResp.Status)
+	}
+
 	// 解析响应
 	var resp Response
 	if err = json.Unmarshal(respBytes, &resp); err != nil {
+		vlog.Errorf("解析响应失败: %v, body: %s", err, respBytes)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
 
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
 	if err != nil {
+		vlog.Errorf("转换响应为map失败: %v, body: %s", err, respBytes)
 		return fmt.Errorf("转换响应为map失败: %w", err)
 	}
 
@@ -150,32 +162,22 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		return fmt.Errorf("请求失败: %s - %s", resp.Body.Code, resp.Body.Msg)
 	}
 
-	// 解密响应数据
-	if encryptedResp, ok := resp.Body.Data.(string); ok {
-		decryptedData, err := Decrypt(encryptedResp, c.privateKey)
+	if respData != nil {
+		// 解密响应数据
+		decryptedData, err := Decrypt(resp.Body.Data, c.privateKey)
 		if err != nil {
+			vlog.Errorf("解密响应数据失败: %v, data: %s", err, resp.Body.Data)
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
+		vlog.Infof("DoRequest respData: %s", decryptedData)
+
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
+			vlog.Errorf("解析解密后的数据失败: %v, data: %s", err, decryptedData)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
-	} else if resp.Body.Data != nil {
-		// 直接解析响应数据
-		dataBytes, err := json.Marshal(resp.Body.Data)
-		if err != nil {
-			return fmt.Errorf("序列化响应数据失败: %w", err)
-		}
-
-		if err := json.Unmarshal(dataBytes, respData); err != nil {
-			return fmt.Errorf("解析响应数据失败: %w", err)
-		}
-	} else {
-		return errors.New("响应数据为空")
 	}
-
-	vlog.Infof("DoRequest respData: %s", vjson.EnsureMarshal(respData))
 
 	return nil
 }

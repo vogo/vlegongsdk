@@ -19,8 +19,11 @@ package cores
 
 import (
 	"encoding/json"
-	"fmt"
+	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/vogo/vogo/vrand"
 )
 
 // RequestHead 请求头
@@ -39,7 +42,7 @@ type RequestHead struct {
 
 // RequestBody 请求体
 type RequestBody struct {
-	Data interface{} `json:"data"`
+	Data string `json:"data"`
 }
 
 // Request 请求
@@ -64,9 +67,9 @@ type ResponseHead struct {
 
 // ResponseBody 响应体
 type ResponseBody struct {
-	Code string      `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Code string `json:"code"`
+	Msg  string `json:"msg"`
+	Data string `json:"data"`
 }
 
 // Response 响应
@@ -76,13 +79,13 @@ type Response struct {
 }
 
 // NewRequest 创建一个新的请求
-func NewRequest(config *Config, data interface{}) *Request {
-	// 生成请求ID
-	requestID := fmt.Sprintf("%d%d", time.Now().UnixNano()/1e6, time.Now().Nanosecond()%1000)
+func NewRequest(config *Config) *Request {
+	requestID := strings.ReplaceAll(uuid.NewString(), " ", "")
+	requestID = strings.ReplaceAll(requestID, "-", "")
 	// 生成请求时间
 	requestTime := time.Now().Format("20060102150405")
 	// 生成随机字符串
-	nonce := GenerateNonce(32)
+	nonce := vrand.RandomString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 32)
 
 	return &Request{
 		Head: RequestHead{
@@ -96,9 +99,7 @@ func NewRequest(config *Config, data interface{}) *Request {
 			EncAlgo:     EncAlgoRSA,
 			TenantCode:  config.TenantCode,
 		},
-		Body: RequestBody{
-			Data: data,
-		},
+		Body: RequestBody{},
 	}
 }
 
@@ -137,15 +138,4 @@ func (r *Request) ToMap() (map[string]interface{}, error) {
 	}
 
 	return result, nil
-}
-
-// GenerateNonce 生成指定长度的随机字符串
-func GenerateNonce(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	result := make([]byte, length)
-	for i := range result {
-		result[i] = charset[time.Now().UnixNano()%int64(len(charset))]
-		time.Sleep(1 * time.Nanosecond) // 确保每次生成的字符不同
-	}
-	return string(result)
 }

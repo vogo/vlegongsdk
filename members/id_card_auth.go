@@ -21,7 +21,7 @@ import "fmt"
 
 // IDCardAuthRequest 采集用工人员身份证请求
 type IDCardAuthRequest struct {
-	FreelancerID string `json:"freelancerId"` // 用工人员编号
+	FreelancerID int    `json:"freelancerId"` // 用工人员编号
 	FrontImgID   string `json:"frontImgId"`   // 人像面照片id，在文件上传接口中返回的fileId
 	BackImgID    string `json:"backImgId"`    // 国徽面照片id，在文件上传接口中返回的fileId
 }

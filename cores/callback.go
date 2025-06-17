@@ -64,33 +64,19 @@ func DecodeCallbackRequest[T any](client *Client, r *http.Request, data *T) erro
 	}
 
 	signStr := BuildSignString(reqMap)
-	if err := Verify(signStr, req.Head.Sign, client.platformKey); err != nil {
+	if err = Verify(signStr, req.Head.Sign, client.platformKey); err != nil {
 		return fmt.Errorf("验证签名失败: %w", err)
 	}
 
 	// 解密请求体
-	if encryptedReq, ok := req.Body.Data.(string); ok {
-		decryptedData, err := Decrypt(encryptedReq, client.privateKey)
-		if err != nil {
-			return fmt.Errorf("解密请求数据失败: %w", err)
-		}
+	decryptedData, err := Decrypt(req.Body.Data, client.privateKey)
+	if err != nil {
+		return fmt.Errorf("解密请求数据失败: %w", err)
+	}
 
-		// 解析解密后的数据
-		if err := json.Unmarshal([]byte(decryptedData), data); err != nil {
-			return fmt.Errorf("解析解密后的数据失败: %w", err)
-		}
-	} else if req.Body.Data != nil {
-		// 直接解析请求数据
-		dataBytes, err := json.Marshal(req.Body.Data)
-		if err != nil {
-			return fmt.Errorf("序列化请求数据失败: %w", err)
-		}
-
-		if err := json.Unmarshal(dataBytes, data); err != nil {
-			return fmt.Errorf("解析请求数据失败: %w", err)
-		}
-	} else {
-		return fmt.Errorf("请求数据为空")
+	// 解析解密后的数据
+	if err := json.Unmarshal([]byte(decryptedData), data); err != nil {
+		return fmt.Errorf("解析解密后的数据失败: %w", err)
 	}
 
 	vlog.Infof("解析回调数据: %+v", data)

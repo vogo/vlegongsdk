@@ -22,12 +22,12 @@ import "fmt"
 // DismissRequest 用工人员注销请求
 type DismissRequest struct {
 	CompanyCode  string `json:"companyCode"`  // 企业编码，用工企业在乐工平台的编码
-	FreelancerID string `json:"freelancerId"` // 用工人员编号
+	FreelancerID int    `json:"freelancerId"` // 用工人员编号
 }
 
 // DismissResponse 用工人员注销响应
 type DismissResponse struct {
-	FreelancerID string `json:"freelancerId"` // 用工人员编号
+	FreelancerID int    `json:"freelancerId"` // 用工人员编号
 	IsDismissed  string `json:"isDismissed"`  // 注销结果，0：注销失败，1：注销成功
 	Remark       string `json:"remark"`       // 备注信息，注销失败原因
 }

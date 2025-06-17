@@ -24,16 +24,17 @@ import (
 	"github.com/vogo/vlegongsdk/cores"
 	"github.com/vogo/vlegongsdk/members"
 	"github.com/vogo/vogo/vlog"
+	"github.com/vogo/vogo/vos"
 )
 
 func main() {
 	// 创建配置
 	config := cores.NewConfig(
-		"https://api.example.com", // 替换为实际的API地址
-		"V00001",                  // 替换为实际的机构编号
-		"uptest",                  // 替换为实际的租户编码
-		"-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----", // 替换为实际的私钥
-		"-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",           // 替换为实际的平台公钥
+		vos.EnsureEnvString("LEGONG_API_URL"),     // 替换为实际的API地址
+		vos.EnsureEnvString("LEGONG_ORG_CODE"),    // 替换为实际的机构编号
+		vos.EnsureEnvString("LEGONG_TENANT_CODE"), // 替换为实际的租户编码
+		vos.EnsureEnvString("LEGONG_PRIVATE_KEY"), // 替换为实际的私钥
+		vos.EnsureEnvString("LEGONG_PUBLIC_KEY"),  // 替换为实际的平台公钥
 	)
 
 	// 创建客户端
@@ -46,34 +47,34 @@ func main() {
 	memberService := members.NewMemberService(client)
 
 	// 示例：注册用工人员
-	registerExample(memberService)
+	//registerExample(memberService)
 
 	// 示例：查询用工人员信息
 	getInfoExample(memberService)
 
 	// 示例：绑定银行卡
-	addBankCardExample(memberService)
+	//addBankCardExample(memberService)
 
-	// 示例：解绑银行卡
-	unbindBankCardExample(memberService)
+	// // 示例：解绑银行卡
+	//unbindBankCardExample(memberService)
 
-	// 示例：采集用工人员身份证
-	idCardAuthExample(memberService)
+	// // 示例：采集用工人员身份证
+	// idCardAuthExample(memberService)
 
-	// 示例：注销用工人员
-	dismissExample(memberService)
+	// // 示例：注销用工人员
+	//dismissExample(memberService)
 }
 
 // 注册用工人员示例
 func registerExample(memberService *members.MemberService) {
 	// 创建用工人员注册请求
 	req := &members.RegisterRequest{
-		CompanyCode:    "COMPANY001",                        // 替换为实际的企业编码
-		FreelancerName: "张三",                                // 替换为实际的用工人员姓名
-		MobilePhone:    "13800138000",                       // 替换为实际的手机号码
-		IDCardNo:       "110101199001011234",                // 替换为实际的身份证号
-		FreelancerType: "1",                                 // 1:自由职业者, 2:雇员
-		CreateTime:     time.Now().Format("20060102150405"), // 当前时间，格式：yyyyMMddHHmmss
+		CompanyCode:    vos.EnsureEnvString("LEGONG_COMPANY_CODE"),      // 替换为实际的企业编码
+		FreelancerName: vos.EnsureEnvString("LEGONG_FREELANCER_NAME"),   // 替换为实际的用工人员姓名
+		MobilePhone:    vos.EnsureEnvString("LEGONG_FREELANCER_MOBILE"), // 替换为实际的手机号码
+		IDCardNo:       vos.EnsureEnvString("LEGONG_FREELANCER_IDCARD"), // 替换为实际的身份证号
+		FreelancerType: "1",                                             // 1:自由职业者, 2:雇员
+		CreateTime:     time.Now().Format("20060102150405"),             // 当前时间，格式：yyyyMMddHHmmss
 	}
 
 	// 发送请求
@@ -84,11 +85,11 @@ func registerExample(memberService *members.MemberService) {
 	}
 
 	// 打印响应
-	fmt.Printf("注册成功，用工人员编号: %s\n", resp.FreelancerID)
-	fmt.Printf("用工人员状态: %s\n", resp.Status)
+	fmt.Printf("注册成功，用工人员编号: %d\n", resp.FreelancerID)
+	fmt.Printf("用工人员状态: %d\n", resp.Status)
 	fmt.Printf("导入时间: %s\n", resp.CreateTime)
 	fmt.Printf("用工人员姓名: %s\n", resp.Name)
-	fmt.Printf("实名校验状态: %s\n", resp.ValidateStatus)
+	fmt.Printf("实名校验状态: %d\n", resp.ValidateStatus)
 	if resp.Remark != "" {
 		fmt.Printf("备注信息: %s\n", resp.Remark)
 	}
@@ -98,8 +99,8 @@ func registerExample(memberService *members.MemberService) {
 func getInfoExample(memberService *members.MemberService) {
 	// 创建查询用工人员信息请求
 	req := &members.InfoRequest{
-		CompanyCode:  "COMPANY001", // 替换为实际的企业编码
-		FreelancerID: "12345",      // 替换为实际的用工人员编号
+		CompanyCode:  vos.EnsureEnvString("LEGONG_COMPANY_CODE"), // 替换为实际的企业编码
+		FreelancerID: vos.EnsureEnvInt("LEGONG_FREELANCER_ID"),   // 替换为实际的用工人员编号
 	}
 
 	// 发送请求
@@ -110,11 +111,11 @@ func getInfoExample(memberService *members.MemberService) {
 	}
 
 	// 打印响应
-	fmt.Printf("用工人员编号: %s\n", resp.FreelancerID)
-	fmt.Printf("用工人员状态: %s\n", resp.Status)
+	fmt.Printf("用工人员编号: %d\n", resp.FreelancerID)
+	fmt.Printf("用工人员状态: %d\n", resp.Status)
 	fmt.Printf("导入时间: %s\n", resp.CreateTime)
 	fmt.Printf("用工人员姓名: %s\n", resp.Name)
-	fmt.Printf("实名校验状态: %s\n", resp.ValidateStatus)
+	fmt.Printf("实名校验状态: %d\n", resp.ValidateStatus)
 	if resp.Remark != "" {
 		fmt.Printf("备注信息: %s\n", resp.Remark)
 	}
@@ -124,10 +125,10 @@ func getInfoExample(memberService *members.MemberService) {
 func addBankCardExample(memberService *members.MemberService) {
 	// 创建绑定银行卡请求
 	req := &members.AddBankCardRequest{
-		CompanyCode: "COMPANY001",          // 替换为实际的企业编码
-		IDCardNo:    "110101199001011234",  // 替换为实际的身份证号
-		BankCardNo:  "6222021234567890123", // 替换为实际的银行卡号
-		Bank:        "中国工商银行",              // 替换为实际的开户行名称
+		CompanyCode: vos.EnsureEnvString("LEGONG_COMPANY_CODE"),      // 替换为实际的企业编码
+		IDCardNo:    vos.EnsureEnvString("LEGONG_FREELANCER_IDCARD"), // 替换为实际的身份证号
+		BankCardNo:  vos.EnsureEnvString("LEGONG_BANK_CARD_NO"),      // 替换为实际的银行卡号
+		Bank:        vos.EnsureEnvString("LEGONG_BANK_NAME"),         // 替换为实际的开户行名称
 	}
 
 	// 发送请求
@@ -144,9 +145,9 @@ func addBankCardExample(memberService *members.MemberService) {
 func unbindBankCardExample(memberService *members.MemberService) {
 	// 创建解绑银行卡请求
 	req := &members.UnbindBankCardRequest{
-		CompanyCode: "COMPANY001",          // 替换为实际的企业编码
-		IDCardNo:    "110101199001011234",  // 替换为实际的身份证号
-		BankCardNo:  "6222021234567890123", // 替换为实际的银行卡号
+		CompanyCode: vos.EnsureEnvString("LEGONG_COMPANY_CODE"),      // 替换为实际的企业编码
+		IDCardNo:    vos.EnsureEnvString("LEGONG_FREELANCER_IDCARD"), // 替换为实际的身份证号
+		BankCardNo:  vos.EnsureEnvString("LEGONG_BANK_CARD_NO"),      // 替换为实际的银行卡号
 	}
 
 	// 发送请求
@@ -164,9 +165,9 @@ func idCardAuthExample(memberService *members.MemberService) {
 	// 创建采集用工人员身份证请求
 	// 注意：需要先通过文件上传接口上传身份证正反面照片，获取图片ID
 	req := &members.IDCardAuthRequest{
-		FreelancerID: "12345",        // 替换为实际的用工人员编号
-		FrontImgID:   "front_img_id", // 替换为实际的身份证人像面照片ID
-		BackImgID:    "back_img_id",  // 替换为实际的身份证国徽面照片ID
+		FreelancerID: vos.EnsureEnvInt("LEGONG_FREELANCER_ID"), // 替换为实际的用工人员编号
+		FrontImgID:   "front_img_id",                           // 替换为实际的身份证人像面照片ID
+		BackImgID:    "back_img_id",                            // 替换为实际的身份证国徽面照片ID
 	}
 
 	// 发送请求
@@ -183,8 +184,8 @@ func idCardAuthExample(memberService *members.MemberService) {
 func dismissExample(memberService *members.MemberService) {
 	// 创建注销用工人员请求
 	req := &members.DismissRequest{
-		CompanyCode:  "COMPANY001", // 替换为实际的企业编码
-		FreelancerID: "12345",      // 替换为实际的用工人员编号
+		CompanyCode:  vos.EnsureEnvString("LEGONG_COMPANY_CODE"), // 替换为实际的企业编码
+		FreelancerID: vos.EnsureEnvInt("LEGONG_FREELANCER_ID"),   // 替换为实际的用工人员编号
 	}
 
 	// 发送请求
