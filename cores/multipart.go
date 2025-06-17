@@ -32,7 +32,7 @@ import (
 
 // DoMultipartRequestWithBytes 使用字节数组发送multipart/form-data请求并处理响应
 func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, fileBytes []byte, fileName string, respData interface{}) error {
-	vlog.Infof("DoMultipartRequestWithBytes path: %s, reqData: %v, fileName: %s", path, vjson.EnsureMarshal(reqData), fileName)
+	vlog.Infof("DoMultipartRequestWithBytes path: %s, reqData: %s, fileName: %s", path, vjson.EnsureMarshal(reqData), fileName)
 
 	// 创建请求
 	req := NewRequest(c.config)
