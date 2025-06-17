@@ -34,14 +34,14 @@ func main() {
 	systemService := systems.NewSystemService(client)
 
 	// 创建完工证明服务
-	proofsService := proofs.NewProofsService(client)
+	proofsService := proofs.NewProofService(client)
 
 	// 示例：上传完工附件并提交
 	uploadAndSubmitCompletionProofExample(systemService, proofsService)
 }
 
 // 上传完工附件并提交示例
-func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService, proofsService *proofs.ProofsService) {
+func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService, proofsService *proofs.ProofService) {
 	fmt.Println("\n===== 上传完工附件并提交示例 =====")
 
 	// 步骤1: 上传完工附件文件

@@ -22,14 +22,14 @@ import (
 	"github.com/vogo/vlegongsdk/cores"
 )
 
-// ProofsService 完工证明服务
-type ProofsService struct {
+// ProofService 完工证明服务
+type ProofService struct {
 	client *cores.Client
 }
 
-// NewProofsService 创建一个新的完工证明服务
-func NewProofsService(client *cores.Client) *ProofsService {
-	service := &ProofsService{
+// NewProofService 创建一个新的完工证明服务
+func NewProofService(client *cores.Client) *ProofService {
+	service := &ProofService{
 		client: client,
 	}
 

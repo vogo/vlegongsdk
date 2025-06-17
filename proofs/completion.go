@@ -29,7 +29,7 @@ type SubmitCompletionProofRequest struct {
 
 // SubmitCompletionProof 提交完工附件
 // 提交支付对应的完工附件。需先上传完工附件获取文件id，再调用此接口
-func (s *ProofsService) SubmitCompletionProof(req *SubmitCompletionProofRequest) error {
+func (s *ProofService) SubmitCompletionProof(req *SubmitCompletionProofRequest) error {
 	err := s.client.DoRequest("/settlement/completionProofApi/submit", req, nil)
 	if err != nil {
 		return fmt.Errorf("提交完工附件失败: %w", err)
