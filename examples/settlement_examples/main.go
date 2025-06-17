@@ -34,7 +34,7 @@ func main() {
 	settlementService := settlements.NewSettlementService(client)
 
 	// 示例4：发起支付
-	payExample(settlementService)
+	//payExample(settlementService)
 
 	// 示例5：查询订单
 	queryOrderExample(settlementService)
@@ -43,10 +43,10 @@ func main() {
 // 发起支付示例
 func payExample(service *settlements.SettlementService) {
 	// 生成唯一的外部订单号
-	outOrderNo := fmt.Sprintf("O%s", uuid.New().String()[:8])
+	outOrderNo := fmt.Sprintf("O%s", uuid.New().String()[:12])
 
 	// 创建支付请求
-	amount := 0.01 // 支付金额0.01元
+	amount := 100.00 // 支付金额100元
 
 	req := &settlements.PayRequest{
 		AccountNo:   vos.EnsureEnvString("LEGONG_BANK_CARD_NO"), // 示例银行卡号

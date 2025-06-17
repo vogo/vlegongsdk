@@ -34,7 +34,7 @@ func main() {
 	memberService := members.NewMemberService(client)
 
 	// 示例：注册用工人员
-	registerExample(memberService)
+	// registerExample(memberService)
 
 	// 示例：查询用工人员信息
 	// getInfoExample(memberService)
@@ -46,7 +46,7 @@ func main() {
 	// unbindBankCardExample(memberService)
 
 	// // 示例：采集用工人员身份证
-	// idCardAuthExample(memberService)
+	idCardAuthExample(memberService)
 
 	// // 示例：注销用工人员
 	// dismissExample(memberService)

@@ -22,7 +22,7 @@ type Order struct {
 	OrderNo                      string  `json:"orderNo"`                                // 平台订单号
 	OutOrderNo                   string  `json:"outOrderNo"`                             // 外部订单号
 	Amount                       float64 `json:"amount,omitempty"`                       // 实际支付金额(元)
-	Status                       string  `json:"tatus"`                                  // 订单状态 S:支付成功 F:支付失败 P:提交成功，订单处理中
+	Status                       string  `json:"status"`                                 // 订单状态 S:支付成功 F:支付失败 P:提交成功，订单处理中
 	Tax                          float64 `json:"tax,omitempty"`                          // 税费总计(元)
 	IncomeTax                    float64 `json:"inComeTax,omitempty"`                    // 个税(元)
 	ValueAddedTax                float64 `json:"valueAddedTax,omitempty"`                // 增值税(元)
