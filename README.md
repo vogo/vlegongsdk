@@ -2,7 +2,20 @@
 
 官网: https://ilegong.cn
 
-这是一个用于对接乐工共享经济服务系统API的Go语言SDK，提供了基础的加解密、签名验签、请求处理等功能，以及用工人员注册等业务接口的封装。
+这是一个用于对接乐工共享经济服务系统API的Go语言SDK，提供了基础的加解密、签名验签、请求处理等功能，以及用工人员注册、签约、支付、文件上传和完工证明等业务接口的封装。
+
+## 目录结构
+
+```
+├── cores/       # 核心功能，包括客户端、配置、加解密、签名验签、请求处理等
+├── members/     # 用工人员相关功能，包括注册、身份认证、银行卡绑定等
+├── settlements/ # 结算相关功能，包括支付、订单查询和支付回调处理等
+├── signs/       # 签约相关功能，包括发起签约、查询签约状态和签约回调处理等
+├── systems/     # 系统相关功能，包括文件上传下载、实名认证等
+├── proofs/      # 完工证明相关功能，包括提交完工附件等
+├── examples/    # 使用示例
+└── doc/         # API文档
+```
 
 ## 安装
 
@@ -77,22 +90,22 @@ fmt.Printf("上传成功，文件ID: %s\n", resp.FileID)
 
 ```go
 // 创建结算服务
-settlementService := settlements.NewSettlementService(client)
+settlementService := settlements.NewSettlementService(client, nil)
 
 // 创建支付请求
 req := &settlements.PayRequest{
-    AccountNo:   "6222021234567890123",           // 银行卡号
-    Amount:      100.50,                         // 支付金额
-    IDCardNo:    "110101199001011234",           // 身份证号
-    Name:        "张三",                         // 姓名
-    NotifyURL:   "https://example.com/notify",   // 通知URL
-    OutOrderNo:  "ORDER_20230101_001",          // 外部订单号
-    PayChannel:  settlements.PayChannelBankCard, // 支付渠道
-    ProjectCode: "PROJECT001",                   // 项目编码
-    Remark:      "测试支付",                     // 备注
+    AccountNo:   "6222021234567890123",  // 银行卡号
+    Amount:      100.00,                // 支付金额（元）
+    IDCardNo:    "110101199001011234", // 身份证号
+    Name:        "张三",               // 姓名
+    NotifyURL:   "https://example.com/payment/callback", // 支付结果通知URL
+    OutOrderNo:  "ORDER123456",        // 外部订单号
+    PayChannel:  settlements.PayChannelBankCard, // 支付渠道（银行卡）
+    ProjectCode: "PROJECT001",         // 项目编码
+    Remark:      "测试支付",           // 备注
 }
 
-// 发送请求
+// 发起支付
 order, err := settlementService.Pay(req)
 if err != nil {
     vlog.Fatalf("发起支付失败: %v", err)
@@ -110,24 +123,23 @@ signService := signs.NewSignService(client, nil)
 
 // 创建签约请求
 req := &signs.StartSignRequest{
-    ProjectCode:  "PROJECT001",                   // 项目编号
-    Name:         "张三",                         // 用工人员姓名
-    IDCardNo:     "110101199001011234",           // 用工人员身份证号
-    NoticeType:   "1",                           // 通知方式 1：发送短信
-    SignPlatform: "1",                           // 签署平台 1-网页版短信认证签署
-    RedirectURL:  "https://example.com/redirect", // 签署完成后重定向地址
-    NotifyURL:    "https://example.com/notify",   // 签署结果通知地址
+    ProjectCode:  "PROJECT001",         // 项目编号
+    Name:         "张三",               // 用工人员姓名
+    IDCardNo:     "110101199001011234", // 身份证号
+    NoticeType:   "1",                 // 发送短信
+    SignPlatform: "1",                 // 网页版短信认证签署
+    RedirectURL:  "https://example.com/redirect", // 签署完成后跳转地址
+    NotifyURL:    "https://example.com/sign/callback", // 签署结果通知URL
 }
 
-// 发送请求
+// 发起签约
 resp, err := signService.StartSign(req)
 if err != nil {
     vlog.Fatalf("发起签约失败: %v", err)
 }
 
 // 打印签约信息
-fmt.Printf("签约流程ID: %s, 签约状态: %d, 签约链接: %s\n", 
-    resp.SignFlowID, resp.SignStatus, resp.SignShortURL)
+fmt.Printf("签约流程ID: %s, 签约链接: %s\n", resp.SignFlowID, resp.SignShortURL)
 ```
 
 ### 提交完工附件
@@ -145,8 +157,8 @@ if err != nil {
 
 // 提交完工附件
 req := &proofs.SubmitCompletionProofRequest{
-    OrderNo: "ORDER123456789", // 支付返回的订单号
-    FileID:  fileResp.FileID,   // 完工附件文件ID
+    OrderNo: "ORDER123456", // 订单号
+    FileID:  fileResp.FileID, // 文件ID
 }
 
 err = proofsService.SubmitCompletionProof(req)
@@ -154,18 +166,8 @@ if err != nil {
     vlog.Fatalf("提交完工附件失败: %v", err)
 }
 
-fmt.Println("提交完工附件成功")
+fmt.Println("完工附件提交成功")
 ```
-
-## 目录结构
-
-- `cores/`: 核心包，包含配置、加解密、签名验签、请求处理、回调处理等基础功能
-- `members/`: 成员服务包，包含用工人员注册、注销、信息查询、实名认证、银行卡绑定等接口
-- `settlements/`: 结算服务包，包含支付、订单查询等结算相关接口
-- `signs/`: 签约服务包，包含自主签约、签约状态查询、签约回调处理等接口
-- `systems/`: 系统服务包，包含文件上传下载、系统认证等接口
-- `proofs/`: 完工证明服务包，包含提交完工附件等接口
-- `examples/`: 各功能模块的示例代码
 
 ## 功能特性
 
@@ -183,6 +185,10 @@ fmt.Println("提交完工附件成功")
 ## 注意事项
 
 - 请确保提供正确的私钥和平台公钥
+- 请确保在生产环境中使用HTTPS进行通信，保证数据传输安全
+- 私钥请妥善保管，不要泄露给第三方
+- 回调处理接口需要部署在可公网访问的服务器上
+- 支付接口调用后，需要通过查询接口或等待回调通知来确认最终支付结果
 - 请确保提供正确的机构编号和租户编码
 - 请确保API基础URL正确
 
