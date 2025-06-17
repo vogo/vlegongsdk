@@ -31,10 +31,10 @@ func main() {
 	client := examples.LoadClient()
 
 	// 创建结算服务
-	settlementService := settlements.NewSettlementService(client)
+	settlementService := settlements.NewSettlementService(client, nil)
 
 	// 示例4：发起支付
-	//payExample(settlementService)
+	// payExample(settlementService)
 
 	// 示例5：查询订单
 	queryOrderExample(settlementService)

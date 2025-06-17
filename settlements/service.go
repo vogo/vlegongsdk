@@ -24,13 +24,25 @@ import (
 // SettlementService 结算服务
 type SettlementService struct {
 	client *cores.Client
+	// 支付回调处理器
+	paymentCallbackHandler *PaymentCallbackHandler
 }
 
 // NewSettlementService 创建一个新的结算服务
-func NewSettlementService(client *cores.Client) *SettlementService {
+func NewSettlementService(client *cores.Client, paymentCallbackHandler cores.CallbackHandler[PaymentCallbackRequest]) *SettlementService {
 	service := &SettlementService{
 		client: client,
 	}
 
+	// 如果提供了回调处理器，则创建支付回调处理器
+	if paymentCallbackHandler != nil {
+		service.paymentCallbackHandler = NewPaymentCallbackHandler(client, paymentCallbackHandler)
+	}
+
 	return service
+}
+
+// GetPaymentCallbackHandler 获取支付回调处理器
+func (s *SettlementService) GetPaymentCallbackHandler() *PaymentCallbackHandler {
+	return s.paymentCallbackHandler
 }
