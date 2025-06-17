@@ -24,11 +24,25 @@ import (
 // SettlementService 结算服务
 type SettlementService struct {
 	client *cores.Client
+	// 签约回调处理器
+	signCallbackHandler *SignCallbackHandler
 }
 
 // NewSettlementService 创建一个新的结算服务
-func NewSettlementService(client *cores.Client) *SettlementService {
-	return &SettlementService{
+func NewSettlementService(client *cores.Client, signCallbackHandler cores.CallbackHandler[SignCallbackRequest]) *SettlementService {
+	service := &SettlementService{
 		client: client,
 	}
+
+	// 如果提供了回调处理器，则创建签约回调处理器
+	if signCallbackHandler != nil {
+		service.signCallbackHandler = NewSignCallbackHandler(client, signCallbackHandler)
+	}
+
+	return service
+}
+
+// GetSignCallbackHandler 获取签约回调处理器
+func (s *SettlementService) GetSignCallbackHandler() *SignCallbackHandler {
+	return s.signCallbackHandler
 }

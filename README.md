@@ -25,7 +25,7 @@ config := cores.NewConfig(
 // 创建客户端
 client, err := cores.NewClient(config)
 if err != nil {
-    log.Fatalf("创建客户端失败: %v", err)
+    vlog.Fatalf("创建客户端失败: %v", err)
 }
 ```
 
@@ -48,7 +48,7 @@ req := &members.RegisterRequest{
 // 发送请求
 resp, err := memberService.Register(req)
 if err != nil {
-    log.Fatalf("注册用工人员失败: %v", err)
+    vlog.Fatalf("注册用工人员失败: %v", err)
 }
 
 // 打印响应

@@ -23,6 +23,7 @@ import (
 
 	"github.com/vogo/vlegongsdk/cores"
 	"github.com/vogo/vlegongsdk/settlements"
+	"github.com/vogo/vogo/vlog"
 )
 
 func main() {
@@ -38,11 +39,11 @@ func main() {
 	// 创建客户端
 	client, err := cores.NewClient(config)
 	if err != nil {
-		log.Fatalf("创建客户端失败: %v", err)
+		vlog.Fatalf("创建客户端失败: %v", err)
 	}
 
 	// 创建结算服务
-	settlementService := settlements.NewSettlementService(client)
+	settlementService := settlements.NewSettlementService(client, nil)
 
 	// 示例1：发起自主签约
 	startSignExample(settlementService)
@@ -70,7 +71,7 @@ func startSignExample(service *settlements.SettlementService) {
 	// 调用自主签约接口
 	resp, err := service.StartSign(req)
 	if err != nil {
-		log.Printf("发起自主签约失败: %v\n", err)
+		vlog.Infof("发起自主签约失败: %v\n", err)
 		return
 	}
 
@@ -106,7 +107,7 @@ func querySignExample(service *settlements.SettlementService) {
 	// 调用签约查询接口
 	resp, err := service.QuerySign(req)
 	if err != nil {
-		log.Printf("查询签约状态失败: %v\n", err)
+		vlog.Infof("查询签约状态失败: %v\n", err)
 		return
 	}
 
@@ -130,7 +131,7 @@ func querySignRecordExample(service *settlements.SettlementService) {
 	// 调用签约记录查询接口
 	resp, err := service.QuerySignRecord(req)
 	if err != nil {
-		log.Printf("查询签约记录失败: %v\n", err)
+		vlog.Infof("查询签约记录失败: %v\n", err)
 		return
 	}
 
@@ -151,4 +152,45 @@ func querySignRecordExample(service *settlements.SettlementService) {
 		fmt.Printf("签约时间: %s\n", record.SignDate)
 		fmt.Printf("协议过期时间: %s\n", record.ExpiryDate)
 	}
+}
+
+// handleSignCallback 处理签约回调
+func handleSignCallback(data interface{}) error {
+	// 类型断言
+	callbackReq, ok := data.(settlements.SignCallbackRequest)
+	if !ok {
+		return fmt.Errorf("无效的回调数据类型: %T", data)
+	}
+
+	// 处理签约回调
+	vlog.Infof("收到签约回调: 流程ID=%s, 状态=%d(%s), 完成时间=%s, 描述=%s",
+		callbackReq.SignFlowID,
+		callbackReq.SignStatus,
+		settlements.GetSignStatusDesc(callbackReq.SignStatus),
+		callbackReq.SignEndTime,
+		callbackReq.SignDesc,
+	)
+
+	// 根据签约状态进行业务处理
+	switch callbackReq.SignStatus {
+	case 0: // 签署中
+		log.Println("签署中，等待用户完成签署")
+		// 可以在这里添加业务逻辑
+	case 1: // 已签约
+		log.Println("签约成功，更新业务状态")
+		// 可以在这里添加业务逻辑，如更新数据库中的签约状态
+	case 2: // 拒签
+		log.Println("用户拒签，需要进行相应处理")
+		// 可以在这里添加业务逻辑
+	case 3: // 过期
+		log.Println("签约已过期，需要重新发起签约")
+		// 可以在这里添加业务逻辑
+	case 4: // 失败
+		log.Println("签约失败，需要排查原因")
+		// 可以在这里添加业务逻辑
+	default:
+		vlog.Infof("未知的签约状态: %d", callbackReq.SignStatus)
+	}
+
+	return nil
 }

@@ -19,11 +19,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/vogo/vlegongsdk/cores"
 	"github.com/vogo/vlegongsdk/members"
+	"github.com/vogo/vogo/vlog"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	// 创建客户端
 	client, err := cores.NewClient(config)
 	if err != nil {
-		log.Fatalf("创建客户端失败: %v", err)
+		vlog.Fatalf("创建客户端失败: %v", err)
 	}
 
 	// 创建成员服务
@@ -79,7 +79,7 @@ func registerExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.Register(req)
 	if err != nil {
-		log.Printf("注册用工人员失败: %v\n", err)
+		vlog.Infof("注册用工人员失败: %v\n", err)
 		return
 	}
 
@@ -105,7 +105,7 @@ func getInfoExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.GetInfo(req)
 	if err != nil {
-		log.Printf("查询用工人员信息失败: %v\n", err)
+		vlog.Infof("查询用工人员信息失败: %v\n", err)
 		return
 	}
 
@@ -133,7 +133,7 @@ func addBankCardExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.AddBankCard(req)
 	if err != nil {
-		log.Printf("绑定银行卡失败: %v\n", err)
+		vlog.Infof("绑定银行卡失败: %v\n", err)
 		return
 	}
 
@@ -152,7 +152,7 @@ func unbindBankCardExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.UnbindBankCard(req)
 	if err != nil {
-		log.Printf("解绑银行卡失败: %v\n", err)
+		vlog.Infof("解绑银行卡失败: %v\n", err)
 		return
 	}
 
@@ -172,7 +172,7 @@ func idCardAuthExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.IDCardAuth(req)
 	if err != nil {
-		log.Printf("采集用工人员身份证失败: %v\n", err)
+		vlog.Infof("采集用工人员身份证失败: %v\n", err)
 		return
 	}
 
@@ -190,7 +190,7 @@ func dismissExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.Dismiss(req)
 	if err != nil {
-		log.Printf("注销用工人员失败: %v\n", err)
+		vlog.Infof("注销用工人员失败: %v\n", err)
 		return
 	}
 
