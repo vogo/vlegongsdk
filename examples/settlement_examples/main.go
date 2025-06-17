@@ -92,10 +92,10 @@ func payExample(service *settlements.SettlementService) {
 		fmt.Printf("订单总金额: %.2f元\n", resp.TotalAmount)
 	}
 	if resp.ServiceChargeBearWay > 0 {
-		fmt.Printf("服务费承担方: %d (%s)\n", resp.ServiceChargeBearWay, settlements.GetServiceChargeBearWayDesc(resp.ServiceChargeBearWay))
+		fmt.Printf("服务费承担方: %d (%s)\n", resp.ServiceChargeBearWay, settlements.GetBearWayDesc(resp.ServiceChargeBearWay))
 	}
 	if resp.IncomeTaxBearWay > 0 {
-		fmt.Printf("个税承担方: %d (%s)\n", resp.IncomeTaxBearWay, settlements.GetIncomeTaxBearWayDesc(resp.IncomeTaxBearWay))
+		fmt.Printf("个税承担方: %d (%s)\n", resp.IncomeTaxBearWay, settlements.GetBearWayDesc(resp.IncomeTaxBearWay))
 	}
 	if resp.ReceivedAmount != 0 {
 		fmt.Printf("到账金额: %.2f元\n", resp.ReceivedAmount)
@@ -107,7 +107,7 @@ func payExample(service *settlements.SettlementService) {
 		fmt.Printf("平台服务费: %.2f元\n", resp.PlatformServiceCharge)
 	}
 	if resp.PlatformServiceChargeBearWay > 0 {
-		fmt.Printf("平台服务费承担方: %d (%s)\n", resp.PlatformServiceChargeBearWay, settlements.GetServiceChargeBearWayDesc(resp.PlatformServiceChargeBearWay))
+		fmt.Printf("平台服务费承担方: %d (%s)\n", resp.PlatformServiceChargeBearWay, settlements.GetBearWayDesc(resp.PlatformServiceChargeBearWay))
 	}
 	if resp.SuccessTime != "" {
 		fmt.Printf("支付时间: %s\n", resp.SuccessTime)
@@ -147,8 +147,8 @@ func queryOrderExample(service *settlements.SettlementService) {
 	}
 
 	fmt.Printf("订单总金额: %.2f元\n", resp.TotalAmount)
-	fmt.Printf("服务费承担方: %d (%s)\n", resp.ServiceChargeBearWay, settlements.GetServiceChargeBearWayDesc(resp.ServiceChargeBearWay))
-	fmt.Printf("个税承担方: %d (%s)\n", resp.IncomeTaxBearWay, settlements.GetIncomeTaxBearWayDesc(resp.IncomeTaxBearWay))
+	fmt.Printf("服务费承担方: %d (%s)\n", resp.ServiceChargeBearWay, settlements.GetBearWayDesc(resp.ServiceChargeBearWay))
+	fmt.Printf("个税承担方: %d (%s)\n", resp.IncomeTaxBearWay, settlements.GetBearWayDesc(resp.IncomeTaxBearWay))
 	fmt.Printf("到账金额: %.2f元\n", resp.ReceivedAmount)
 
 	if resp.Desc != "" {
@@ -160,7 +160,7 @@ func queryOrderExample(service *settlements.SettlementService) {
 	}
 
 	if resp.PlatformServiceChargeBearWay > 0 {
-		fmt.Printf("平台服务费承担方: %d (%s)\n", resp.PlatformServiceChargeBearWay, settlements.GetServiceChargeBearWayDesc(resp.PlatformServiceChargeBearWay))
+		fmt.Printf("平台服务费承担方: %d (%s)\n", resp.PlatformServiceChargeBearWay, settlements.GetBearWayDesc(resp.PlatformServiceChargeBearWay))
 	}
 
 	fmt.Printf("支付时间: %s\n", resp.SuccessTime)

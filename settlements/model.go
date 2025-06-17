@@ -17,6 +17,19 @@
 
 package settlements
 
+const (
+	PayChannelBankCard = 1 // 银行卡
+
+	// 服务费承担方
+	BearWayEnterprise = 1 // 企业承担
+	BearWayPersonal   = 2 // 个人承担
+
+	// 订单状态
+	OrderStatusProcessing = "P" // 处理中
+	OrderStatusSuccess    = "S" // 成功
+	OrderStatusFailed     = "F" // 失败
+)
+
 // Order 支付订单
 type Order struct {
 	OrderNo                      string  `json:"orderNo"`                                // 平台订单号
@@ -52,24 +65,12 @@ func GetOrderStatusDesc(status string) string {
 	}
 }
 
-// GetServiceChargeBearWayDesc 获取服务费承担方描述
-func GetServiceChargeBearWayDesc(bearWay int) string {
+// GetBearWayDesc 获取承担方描述
+func GetBearWayDesc(bearWay int) string {
 	switch bearWay {
-	case ServiceChargeBearWayEnterprise:
+	case BearWayEnterprise:
 		return "企业承担"
-	case ServiceChargeBearWayPersonal:
-		return "个人承担"
-	default:
-		return "未知"
-	}
-}
-
-// GetIncomeTaxBearWayDesc 获取个税承担方描述
-func GetIncomeTaxBearWayDesc(bearWay int) string {
-	switch bearWay {
-	case IncomeTaxBearWayEnterprise:
-		return "企业承担"
-	case IncomeTaxBearWayPersonal:
+	case BearWayPersonal:
 		return "个人承担"
 	default:
 		return "未知"

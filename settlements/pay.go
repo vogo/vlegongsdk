@@ -21,23 +21,6 @@ import (
 	"fmt"
 )
 
-const (
-	PayChannelBankCard = 1 // 银行卡
-
-	// 服务费承担方
-	ServiceChargeBearWayEnterprise = 1 // 企业承担
-	ServiceChargeBearWayPersonal   = 2 // 个人承担
-
-	// 个税承担方
-	IncomeTaxBearWayEnterprise = 1 // 企业承担
-	IncomeTaxBearWayPersonal   = 2 // 个人承担
-
-	// 订单状态
-	OrderStatusProcessing = "P" // 处理中
-	OrderStatusSuccess    = "S" // 成功
-	OrderStatusFailed     = "F" // 失败
-)
-
 // PayRequest 支付请求
 type PayRequest struct {
 	AccountNo   string  `json:"accountNo"`   // 银行卡号

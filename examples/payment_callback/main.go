@@ -73,7 +73,7 @@ func handlePaymentCallback(data settlements.PaymentCallbackRequest) error {
 		vlog.Infof("支付渠道: %d, 税费: %.2f, 服务费承担方: %s",
 			data.PayChannel,
 			data.Tax,
-			settlements.GetServiceChargeBearWayDesc(data.ServiceChargeBearWay),
+			settlements.GetBearWayDesc(data.ServiceChargeBearWay),
 		)
 	case "F": // 支付失败
 		log.Println("支付失败，需要排查原因")
