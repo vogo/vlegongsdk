@@ -29,7 +29,7 @@ type SettlementService struct {
 }
 
 // NewSettlementService 创建一个新的结算服务
-func NewSettlementService(client *cores.Client, paymentCallbackHandler cores.CallbackHandler[PaymentCallbackRequest]) *SettlementService {
+func NewSettlementService(client *cores.Client, paymentCallbackHandler cores.CallbackHandler[*PaymentCallbackRequest]) *SettlementService {
 	service := &SettlementService{
 		client: client,
 	}

@@ -49,11 +49,11 @@ type PaymentCallbackRequest struct {
 // PaymentCallbackHandler 支付回调处理器
 type PaymentCallbackHandler struct {
 	client  *cores.Client
-	handler cores.CallbackHandler[PaymentCallbackRequest]
+	handler cores.CallbackHandler[*PaymentCallbackRequest]
 }
 
 // NewPaymentCallbackHandler 创建支付回调处理器
-func NewPaymentCallbackHandler(client *cores.Client, handler cores.CallbackHandler[PaymentCallbackRequest]) *PaymentCallbackHandler {
+func NewPaymentCallbackHandler(client *cores.Client, handler cores.CallbackHandler[*PaymentCallbackRequest]) *PaymentCallbackHandler {
 	return &PaymentCallbackHandler{
 		client:  client,
 		handler: handler,
@@ -77,7 +77,7 @@ func (h *PaymentCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	}
 
 	// 处理回调请求
-	if err := h.handler.HandleCallback(callbackReq); err != nil {
+	if err := h.handler.HandleCallback(&callbackReq); err != nil {
 		vlog.Errorf("处理支付回调请求失败: %v", err)
 		http.Error(w, fmt.Sprintf("处理支付回调请求失败: %v", err), http.StatusInternalServerError)
 		return

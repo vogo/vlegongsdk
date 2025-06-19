@@ -32,7 +32,7 @@ func main() {
 	client := examples.LoadClient()
 
 	// 创建自定义回调处理函数
-	callbackHandler := cores.CallbackHandlerFunc[settlements.PaymentCallbackRequest](handlePaymentCallback)
+	callbackHandler := cores.CallbackHandlerFunc[*settlements.PaymentCallbackRequest](handlePaymentCallback)
 
 	// 创建结算服务，并传入回调处理函数
 	service := settlements.NewSettlementService(client, callbackHandler)
@@ -54,7 +54,7 @@ func main() {
 }
 
 // handlePaymentCallback 处理支付回调
-func handlePaymentCallback(data settlements.PaymentCallbackRequest) error {
+func handlePaymentCallback(data *settlements.PaymentCallbackRequest) error {
 	// 处理支付回调
 	vlog.Infof("收到支付回调: 订单号=%s, 外部订单号=%s, 状态=%s, 金额=%.2f, 到账金额=%.2f, 完成时间=%s",
 		data.OrderNo,

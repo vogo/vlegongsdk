@@ -18,9 +18,12 @@
 package settlements
 
 const (
+	// 支付渠道
 	PayChannelBankCard = 1 // 银行卡
+	PayChannelWeChat   = 2 // 微信
+	PayChannelAliPay   = 3 // 支付宝
 
-	// 服务费承担方
+	// 费用承担方
 	BearWayEnterprise = 1 // 企业承担
 	BearWayPersonal   = 2 // 个人承担
 
