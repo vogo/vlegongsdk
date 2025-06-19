@@ -67,7 +67,7 @@ func NewClient(config *Config) (*Client, error) {
 
 // DoRequest 发送请求并处理响应
 func (c *Client) DoRequest(path string, reqData interface{}, respData interface{}) error {
-	vlog.Infof("DoRequest path: %s, reqData: %s", path, vjson.EnsureMarshal(reqData))
+	vlog.Infof("legong request, path: %s, body: %s", path, vjson.EnsureMarshal(reqData))
 
 	// 创建请求
 	req := NewRequest(c.config)
@@ -168,14 +168,18 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
-		vlog.Infof("DoRequest respData: %s", decryptedData)
+		vlog.Infof("legong response, path: %s, body: %s", path, decryptedData)
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
 			vlog.Errorf("解析解密后的数据失败: %v, data: %s", err, decryptedData)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
+
+		return nil
 	}
+
+	vlog.Infof("legong response, path: %s, code: %s, msg: %s", path, resp.Body.Code, resp.Body.Msg)
 
 	return nil
 }
