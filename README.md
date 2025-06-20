@@ -192,6 +192,25 @@ fmt.Println("完工附件提交成功")
 - 请确保提供正确的机构编号和租户编码
 - 请确保API基础URL正确
 
+## 贡献代码
+
+我们非常欢迎您为乐工SDK贡献代码！如果您有任何改进或新功能的想法，请按照以下步骤参与：
+
+1. Fork 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交您的更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 开启一个 Pull Request
+
+### 问题反馈
+
+如果您在使用过程中遇到任何问题或有任何建议，欢迎通过以下方式反馈：
+
+- 提交 [GitHub Issues](https://github.com/vogo/vlegongsdk/issues)
+- 在 Pull Request 中详细描述您的问题或建议
+
+我们会尽快回复并解决您提出的问题。
+
 ## 许可证
 
 [Apache License Version 2.0](LICENSE)
