@@ -78,12 +78,12 @@ func DecodeCallbackRequest[T any](client *Client, r *http.Request, data *T) erro
 		return fmt.Errorf("解密请求数据失败: %w", err)
 	}
 
+	vlog.Infof("decrypted callback data: %s", decryptedData)
+
 	// 解析解密后的数据
 	if err := json.Unmarshal([]byte(decryptedData), data); err != nil {
 		return fmt.Errorf("解析解密后的数据失败: %w", err)
 	}
-
-	vlog.Infof("Parsed callback data: %+v", data)
 
 	return nil
 }
