@@ -67,7 +67,7 @@ func registerExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.Register(req)
 	if err != nil {
-		vlog.Infof("注册用工人员失败: %v\n", err)
+		vlog.Infof("Failed to register member: %v\n", err)
 		return
 	}
 
@@ -93,7 +93,7 @@ func getInfoExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.GetInfo(req)
 	if err != nil {
-		vlog.Infof("查询用工人员信息失败: %v\n", err)
+		vlog.Infof("Failed to query member info: %v\n", err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func addBankCardExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.AddBankCard(req)
 	if err != nil {
-		vlog.Infof("绑定银行卡失败: %v\n", err)
+		vlog.Infof("Failed to bind bank card: %v\n", err)
 		return
 	}
 
@@ -140,7 +140,7 @@ func unbindBankCardExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.UnbindBankCard(req)
 	if err != nil {
-		vlog.Infof("解绑银行卡失败: %v\n", err)
+		vlog.Infof("Failed to unbind bank card: %v\n", err)
 		return
 	}
 
@@ -160,7 +160,7 @@ func idCardAuthExample(memberService *members.MemberService) {
 	// 发送请求
 	err := memberService.IDCardAuth(req)
 	if err != nil {
-		vlog.Infof("采集用工人员身份证失败: %v\n", err)
+		vlog.Infof("Failed to collect member ID card: %v\n", err)
 		return
 	}
 
@@ -178,7 +178,7 @@ func dismissExample(memberService *members.MemberService) {
 	// 发送请求
 	resp, err := memberService.Dismiss(req)
 	if err != nil {
-		vlog.Infof("注销用工人员失败: %v\n", err)
+		vlog.Infof("Failed to dismiss member: %v\n", err)
 		return
 	}
 

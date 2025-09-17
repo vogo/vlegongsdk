@@ -40,7 +40,7 @@ config := cores.NewConfig(
 // 创建客户端
 client, err := cores.NewClient(config)
 if err != nil {
-    vlog.Fatalf("创建客户端失败: %v", err)
+    vlog.Fatalf("Failed to create client: %v", err)
 }
 ```
 
@@ -63,7 +63,7 @@ req := &members.RegisterRequest{
 // 发送请求
 resp, err := memberService.Register(req)
 if err != nil {
-    vlog.Fatalf("注册用工人员失败: %v", err)
+    vlog.Fatalf("Failed to register member: %v", err)
 }
 
 // 打印响应
@@ -79,7 +79,7 @@ systemService := systems.NewSystemService(client)
 // 上传身份证文件
 resp, err := systemService.UploadFileFromPath("./idcard.jpg", systems.FileTypeIDCard)
 if err != nil {
-    vlog.Fatalf("上传文件失败: %v", err)
+    vlog.Fatalf("Failed to upload file: %v", err)
 }
 
 // 打印文件ID
@@ -108,7 +108,7 @@ req := &settlements.PayRequest{
 // 发起支付
 order, err := settlementService.Pay(req)
 if err != nil {
-    vlog.Fatalf("发起支付失败: %v", err)
+    vlog.Fatalf("Failed to initiate payment: %v", err)
 }
 
 // 打印订单信息
@@ -135,7 +135,7 @@ req := &signs.StartSignRequest{
 // 发起签约
 resp, err := signService.StartSign(req)
 if err != nil {
-    vlog.Fatalf("发起签约失败: %v", err)
+    vlog.Fatalf("Failed to initiate signing: %v", err)
 }
 
 // 打印签约信息
@@ -152,7 +152,7 @@ proofsService := proofs.NewProofsService(client)
 // 上传完工证明文件
 fileResp, err := systemService.UploadFileFromPath("./completion_proof.pdf", systems.FileTypeCompletionProof)
 if err != nil {
-    vlog.Fatalf("上传完工证明文件失败: %v", err)
+    vlog.Fatalf("Failed to upload completion proof file: %v", err)
 }
 
 // 提交完工附件
@@ -163,7 +163,7 @@ req := &proofs.SubmitCompletionProofRequest{
 
 err = proofsService.SubmitCompletionProof(req)
 if err != nil {
-    vlog.Fatalf("提交完工附件失败: %v", err)
+    vlog.Fatalf("Failed to submit completion attachment: %v", err)
 }
 
 fmt.Println("完工附件提交成功")

@@ -51,7 +51,7 @@ func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService,
 	// 上传文件
 	fileResp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeCompletionProof)
 	if err != nil {
-		vlog.Errorf("上传完工附件文件失败: %v\n", err)
+		vlog.Errorf("Failed to upload completion attachment file: %v\n", err)
 		return
 	}
 
@@ -70,7 +70,7 @@ func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService,
 	// 调用提交完工附件接口
 	err = proofsService.SubmitCompletionProof(req)
 	if err != nil {
-		vlog.Errorf("提交完工附件失败: %v\n", err)
+		vlog.Errorf("Failed to submit completion attachment: %v\n", err)
 		return
 	}
 

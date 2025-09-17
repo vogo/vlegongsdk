@@ -40,7 +40,7 @@ func main() {
 	// 创建客户端
 	client, err := cores.NewClient(config)
 	if err != nil {
-		vlog.Fatalf("创建客户端失败: %v", err)
+		vlog.Fatalf("Failed to create client: %v", err)
 	}
 
 	// 创建系统服务
@@ -64,7 +64,7 @@ func uploadFileExample(systemService *systems.SystemService) {
 	// 上传文件
 	resp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeIDCard)
 	if err != nil {
-		vlog.Errorf("上传文件失败: %v\n", err)
+		vlog.Errorf("Failed to upload file: %v\n", err)
 		return
 	}
 
@@ -89,7 +89,7 @@ func downloadFileExample(systemService *systems.SystemService) {
 	// 下载文件
 	err := systemService.DownloadFile(fileID, savePath)
 	if err != nil {
-		vlog.Errorf("下载文件失败: %v\n", err)
+		vlog.Errorf("Failed to download file: %v\n", err)
 	} else {
 		println("下载成功")
 	}

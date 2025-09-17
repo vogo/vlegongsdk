@@ -41,14 +41,20 @@ type Order struct {
 	Status                       string  `json:"status"`                                 // 订单状态 S:支付成功 F:支付失败 P:提交成功，订单处理中
 	Tax                          float64 `json:"tax,omitempty"`                          // 税费总计(元)
 	IncomeTax                    float64 `json:"inComeTax,omitempty"`                    // 个税(元)
+	IncomeTaxRate                float64 `json:"inComeTaxRate,omitempty"`                // 个税税率，4位小数，0.3000代表30%
 	ValueAddedTax                float64 `json:"valueAddedTax,omitempty"`                // 增值税(元)
+	ValueAddedTaxRate            float64 `json:"valueAddedTaxRate,omitempty"`            // 增值税税率，4位小数，0.3000代表30%
 	AdditionalTax                float64 `json:"additionalTax,omitempty"`                // 附加税(元)
+	AdditionalTaxRate            float64 `json:"additionalTaxRate,omitempty"`            // 附加税税率，4位小数，0.3000代表30%
 	TotalAmount                  float64 `json:"totalAmount,omitempty"`                  // 订单总金额(元)
+	ServiceCharge                float64 `json:"serviceCharge,omitempty"`                // 企业服务费(元)
+	ServiceChargeRate            float64 `json:"serviceChargeRate,omitempty"`            // 企业服务费费率，4位小数，0.3000代表30%
 	ServiceChargeBearWay         int     `json:"serviceChargeBearWay,omitempty"`         // 服务费承担方, 1:企业承担,2:个人承担
 	IncomeTaxBearWay             int     `json:"incomeTaxBearWay,omitempty"`             // 个税承担方, 1:企业承担,2:个人承担
 	ReceivedAmount               float64 `json:"receivedAmount,omitempty"`               // 到账金额(元)
 	Desc                         string  `json:"desc,omitempty"`                         // 状态描述
 	PlatformServiceCharge        float64 `json:"platformServiceCharge,omitempty"`        // 平台服务费(元)
+	PlatformServiceChargeRate    float64 `json:"platformServiceChargeRate,omitempty"`    // 平台服务费费率，4位小数，0.3000代表30%
 	PlatformServiceChargeBearWay int     `json:"platformServiceChargeBearWay,omitempty"` // 平台服务费承担方, 1:企业承担,2:个人承担
 	SuccessTime                  string  `json:"successTime,omitempty"`                  // 支付成功时间，格式：yyyy-MM-dd HH:mm:ss
 	PayChannel                   int     `json:"payChannel,omitempty"`                   // 支付渠道 0-未知 1-银行卡 2:微信 3:支付宝

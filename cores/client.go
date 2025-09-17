@@ -112,7 +112,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
 	if err != nil {
-		vlog.Errorf("创建HTTP请求失败: %v, request: %s", err, reqBytes)
+		vlog.Errorf("Failed to create HTTP request: %v, request: %s", err, reqBytes)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -120,10 +120,14 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("发送HTTP请求失败: %v, request: %s", err, reqBytes)
+		vlog.Errorf("Failed to send HTTP request: %v, request: %s", err, reqBytes)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
-	defer httpResp.Body.Close()
+	defer func() {
+		if closeErr := httpResp.Body.Close(); closeErr != nil {
+			vlog.Errorf("Failed to close response body: %v", closeErr)
+		}
+	}()
 
 	// 读取响应
 	respBytes, err := io.ReadAll(httpResp.Body)
@@ -139,7 +143,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	// 解析响应
 	var resp Response
 	if err = json.Unmarshal(respBytes, &resp); err != nil {
-		vlog.Errorf("解析响应失败: %v, body: %s", err, respBytes)
+		vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
 	// 检查响应码
@@ -150,13 +154,13 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
 	if err != nil {
-		vlog.Errorf("转换响应为map失败: %v, body: %s", err, respBytes)
+		vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
 		return fmt.Errorf("转换响应为map失败: %w", err)
 	}
 
 	signStr = BuildSignString(respMap)
 	if err := Verify(signStr, resp.Head.Sign, c.platformKey); err != nil {
-		vlog.Errorf("验证签名失败: %v, response: %s, signStr: %s", err, respBytes, signStr)
+		vlog.Errorf("Failed to verify signature: %v, response: %s, signStr: %s", err, respBytes, signStr)
 		return fmt.Errorf("验证签名失败: %w", err)
 	}
 
@@ -164,7 +168,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		// 解密响应数据
 		decryptedData, err := Decrypt(resp.Body.Data, c.privateKey)
 		if err != nil {
-			vlog.Errorf("解密响应数据失败: %v, data: %s", err, resp.Body.Data)
+			vlog.Errorf("Failed to decrypt response data: %v, data: %s", err, resp.Body.Data)
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
@@ -172,7 +176,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
-			vlog.Errorf("解析解密后的数据失败: %v, data: %s", err, decryptedData)
+			vlog.Errorf("Failed to parse decrypted data: %v, data: %s", err, decryptedData)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
 

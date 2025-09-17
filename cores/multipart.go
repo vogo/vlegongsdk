@@ -112,7 +112,7 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 	// 创建HTTP请求
 	httpReq, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		vlog.Errorf("创建HTTP请求失败: %v", err)
+		vlog.Errorf("Failed to create HTTP request: %v", err)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -125,10 +125,14 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 
 	httpResp, err := httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("发送HTTP请求失败: %v", err)
+		vlog.Errorf("Failed to send HTTP request: %v", err)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
-	defer httpResp.Body.Close()
+	defer func() {
+		if closeErr := httpResp.Body.Close(); closeErr != nil {
+			vlog.Errorf("Failed to close response body: %v", closeErr)
+		}
+	}()
 
 	// 读取响应
 	respBytes, err := io.ReadAll(httpResp.Body)
@@ -144,14 +148,14 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 	// 解析响应
 	var resp Response
 	if err = json.Unmarshal(respBytes, &resp); err != nil {
-		vlog.Errorf("解析响应失败: %v, body: %s", err, respBytes)
+		vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
 
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
 	if err != nil {
-		vlog.Errorf("转换响应为map失败: %v, body: %s", err, respBytes)
+		vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
 		return fmt.Errorf("转换响应为map失败: %w", err)
 	}
 
@@ -169,7 +173,7 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 		// 解密响应数据
 		decryptedData, err := Decrypt(resp.Body.Data, c.privateKey)
 		if err != nil {
-			vlog.Errorf("解密响应数据失败: %v, data: %s", err, resp.Body.Data)
+			vlog.Errorf("Failed to decrypt response data: %v, data: %s", err, resp.Body.Data)
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
@@ -177,7 +181,7 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
-			vlog.Errorf("解析解密后的数据失败: %v, data: %s", err, decryptedData)
+			vlog.Errorf("Failed to parse decrypted data: %v, data: %s", err, decryptedData)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
 	}

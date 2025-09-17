@@ -38,7 +38,7 @@ func main() {
 	// 创建客户端
 	client, err := cores.NewClient(config)
 	if err != nil {
-		vlog.Fatalf("创建客户端失败: %v", err)
+		vlog.Fatalf("Failed to create client: %v", err)
 	}
 
 	// 创建结算服务
@@ -70,7 +70,7 @@ func startSignExample(service *signs.SignService) {
 	// 调用自主签约接口
 	resp, err := service.StartSign(req)
 	if err != nil {
-		vlog.Infof("发起自主签约失败: %v\n", err)
+		vlog.Infof("Failed to initiate autonomous signing: %v\n", err)
 		return
 	}
 
@@ -106,7 +106,7 @@ func querySignExample(service *signs.SignService) {
 	// 调用签约查询接口
 	resp, err := service.QuerySign(req)
 	if err != nil {
-		vlog.Infof("查询签约状态失败: %v\n", err)
+		vlog.Infof("Failed to query signing status: %v\n", err)
 		return
 	}
 
@@ -130,7 +130,7 @@ func querySignRecordExample(service *signs.SignService) {
 	// 调用签约记录查询接口
 	resp, err := service.QuerySignRecord(req)
 	if err != nil {
-		vlog.Infof("查询签约记录失败: %v\n", err)
+		vlog.Infof("Failed to query signing records: %v\n", err)
 		return
 	}
 

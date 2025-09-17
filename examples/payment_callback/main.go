@@ -40,7 +40,7 @@ func main() {
 	// 获取支付回调处理器
 	paymentCallbackHandler := service.GetPaymentCallbackHandler()
 	if paymentCallbackHandler == nil {
-		vlog.Fatal("支付回调处理器为空")
+		vlog.Fatal("Payment callback handler is empty")
 	}
 
 	// 注册HTTP处理器
@@ -48,15 +48,15 @@ func main() {
 
 	// 启动HTTP服务器
 	port := 8080
-	vlog.Infof("启动HTTP服务器，监听端口: %d", port)
-	vlog.Infof("支付回调URL: http://localhost:%d/api/callback/payment", port)
+	vlog.Infof("Starting HTTP server, listening on port: %d", port)
+	vlog.Infof("Payment callback URL: http://localhost:%d/api/callback/payment", port)
 	vlog.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
 // handlePaymentCallback 处理支付回调
 func handlePaymentCallback(data *settlements.PaymentCallbackRequest) error {
 	// 处理支付回调
-	vlog.Infof("收到支付回调: 订单号=%s, 外部订单号=%s, 状态=%s, 金额=%.2f, 到账金额=%.2f, 完成时间=%s",
+	vlog.Infof("Received payment callback: OrderNo=%s, ExternalOrderNo=%s, Status=%s, Amount=%.2f, ArrivalAmount=%.2f, CompletionTime=%s",
 		data.OrderNo,
 		data.OutOrderNo,
 		data.Status,
@@ -70,7 +70,7 @@ func handlePaymentCallback(data *settlements.PaymentCallbackRequest) error {
 	case "S": // 支付成功
 		log.Println("支付成功，更新业务状态")
 		// 可以在这里添加业务逻辑，如更新数据库中的支付状态
-		vlog.Infof("支付渠道: %d, 税费: %.2f, 服务费承担方: %s",
+		vlog.Infof("Payment channel: %d, Tax fee: %.2f, Service fee bearer: %s",
 			data.PayChannel,
 			data.Tax,
 			settlements.GetBearWayDesc(data.ServiceChargeBearWay),
@@ -78,12 +78,12 @@ func handlePaymentCallback(data *settlements.PaymentCallbackRequest) error {
 	case "F": // 支付失败
 		log.Println("支付失败，需要排查原因")
 		// 可以在这里添加业务逻辑
-		vlog.Infof("失败原因: %s", data.Desc)
+		vlog.Infof("Failure reason: %s", data.Desc)
 	case "P": // 处理中
 		log.Println("支付处理中，等待最终结果")
 		// 可以在这里添加业务逻辑
 	default:
-		vlog.Infof("未知的支付状态: %s", data.Status)
+		vlog.Infof("Unknown payment status: %s", data.Status)
 	}
 
 	return nil

@@ -40,7 +40,7 @@ func main() {
 	// 获取签约回调处理器
 	signCallbackHandler := service.GetSignCallbackHandler()
 	if signCallbackHandler == nil {
-		vlog.Fatal("签约回调处理器为空")
+		vlog.Fatal("Sign callback handler is empty")
 	}
 
 	// 注册HTTP处理器
@@ -48,15 +48,15 @@ func main() {
 
 	// 启动HTTP服务器
 	port := 8080
-	vlog.Infof("启动HTTP服务器，监听端口: %d", port)
-	vlog.Infof("签约回调URL: http://localhost:%d/api/callback/sign", port)
+	vlog.Infof("Starting HTTP server, listening on port: %d", port)
+	vlog.Infof("Sign callback URL: http://localhost:%d/api/callback/sign", port)
 	vlog.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
 // handleSignCallback 处理签约回调
 func handleSignCallback(data signs.SignCallbackRequest) error {
 	// 处理签约回调
-	vlog.Infof("收到签约回调: 流程ID=%s, 状态=%d(%s), 完成时间=%s, 描述=%s",
+	vlog.Infof("Received sign callback: ProcessID=%s, Status=%d(%s), CompletionTime=%s, Description=%s",
 		data.SignFlowID,
 		data.SignStatus,
 		signs.GetSignStatusDesc(data.SignStatus),
@@ -82,7 +82,7 @@ func handleSignCallback(data signs.SignCallbackRequest) error {
 		log.Println("签约失败，需要排查原因")
 		// 可以在这里添加业务逻辑
 	default:
-		vlog.Infof("未知的签约状态: %d", data.SignStatus)
+		vlog.Infof("Unknown sign status: %d", data.SignStatus)
 	}
 
 	return nil

@@ -124,7 +124,7 @@ func queryOrderExample(service *settlements.SettlementService) {
 	// 调用订单查询接口
 	resp, err := service.QueryOrder(req)
 	if err != nil {
-		vlog.Infof("查询订单失败: %v\n", err)
+		vlog.Infof("Failed to query order: %v\n", err)
 		return
 	}
 

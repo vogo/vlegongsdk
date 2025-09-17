@@ -36,7 +36,7 @@ func LoadClient() *cores.Client {
 	// 创建客户端
 	client, err := cores.NewClient(config)
 	if err != nil {
-		vlog.Fatalf("创建客户端失败: %v", err)
+		vlog.Fatalf("Failed to create client: %v", err)
 	}
 
 	return client

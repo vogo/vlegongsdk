@@ -58,14 +58,14 @@ func (h *SignCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	// 解析回调请求
 	var callbackReq SignCallbackRequest
 	if err := cores.DecodeCallbackRequest(h.client, r, &callbackReq); err != nil {
-		vlog.Errorf("解析签约回调请求失败: %v", err)
+		vlog.Errorf("Failed to parse sign callback request: %v", err)
 		http.Error(w, fmt.Sprintf("解析签约回调请求失败: %v", err), http.StatusBadRequest)
 		return
 	}
 
 	// 处理回调请求
 	if err := h.handler.HandleCallback(callbackReq); err != nil {
-		vlog.Errorf("处理签约回调请求失败: %v", err)
+		vlog.Errorf("Failed to handle sign callback request: %v", err)
 		http.Error(w, fmt.Sprintf("处理签约回调请求失败: %v", err), http.StatusInternalServerError)
 		return
 	}

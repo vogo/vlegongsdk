@@ -33,9 +33,14 @@ type PaymentCallbackRequest struct {
 	Amount                       float64 `json:"amount"`                                 // 实际支付金额(元)
 	Tax                          float64 `json:"tax"`                                    // 税费总计(元)
 	IncomeTax                    float64 `json:"inComeTax,omitempty"`                    // 个税(元)
+	IncomeTaxRate                float64 `json:"inComeTaxRate,omitempty"`                // 个税税率，4位小数，0.3000代表30%
 	ValueAddedTax                float64 `json:"valueAddedTax,omitempty"`                // 增值税(元)
+	ValueAddedTaxRate            float64 `json:"valueAddedTaxRate,omitempty"`            // 增值税税率，4位小数，0.3000代表30%
 	AdditionalTax                float64 `json:"additionalTax,omitempty"`                // 附加税(元)
+	AdditionalTaxRate            float64 `json:"additionalTaxRate,omitempty"`            // 附加税税率，4位小数，0.3000代表30%
 	TotalAmount                  float64 `json:"totalAmount"`                            // 订单总金额(元)
+	ServiceCharge                float64 `json:"serviceCharge,omitempty"`                // 企业服务费(元)
+	ServiceChargeRate            float64 `json:"serviceChargeRate,omitempty"`            // 企业服务费费率，4位小数，0.3000代表30%
 	ServiceChargeBearWay         int     `json:"serviceChargeBearWay"`                   // 服务费承担方, 1:企业承担,2:个人承担
 	IncomeTaxBearWay             int     `json:"incomeTaxBearWay"`                       // 个税承担方, 1:企业承担,2:个人承担
 	ReceivedAmount               float64 `json:"receivedAmount"`                         // 到账金额(元)
@@ -43,6 +48,7 @@ type PaymentCallbackRequest struct {
 	SuccessTime                  string  `json:"successTime,omitempty"`                  // 支付完成时间，格式：yyyyMMddHHmmss，支付成功返回
 	PayChannel                   int     `json:"payChannel"`                             // 支付渠道 1:银行卡 2:微信支付 3:支付宝
 	PlatformServiceCharge        float64 `json:"platformServiceCharge,omitempty"`        // 平台服务费(元)
+	PlatformServiceChargeRate    float64 `json:"platformServiceChargeRate,omitempty"`    // 平台服务费费率，4位小数，0.3000代表30%
 	PlatformServiceChargeBearWay int     `json:"platformServiceChargeBearWay,omitempty"` // 平台服务费承担方, 1:企业承担,2:个人承担
 }
 
@@ -71,14 +77,14 @@ func (h *PaymentCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	// 解析回调请求
 	var callbackReq PaymentCallbackRequest
 	if err := cores.DecodeCallbackRequest(h.client, r, &callbackReq); err != nil {
-		vlog.Errorf("解析支付回调请求失败: %v", err)
+		vlog.Errorf("Failed to parse payment callback request: %v", err)
 		http.Error(w, fmt.Sprintf("解析支付回调请求失败: %v", err), http.StatusBadRequest)
 		return
 	}
 
 	// 处理回调请求
 	if err := h.handler.HandleCallback(&callbackReq); err != nil {
-		vlog.Errorf("处理支付回调请求失败: %v", err)
+		vlog.Errorf("Failed to handle payment callback request: %v", err)
 		http.Error(w, fmt.Sprintf("处理支付回调请求失败: %v", err), http.StatusInternalServerError)
 		return
 	}

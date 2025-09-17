@@ -85,7 +85,7 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 
 	httpReq, err := http.NewRequest("POST", reqUrl, bytes.NewBuffer(reqBytes))
 	if err != nil {
-		vlog.Errorf("创建HTTP请求失败: %v, request: %s", err, reqBytes)
+		vlog.Errorf("Failed to create HTTP request: %v, request: %s", err, reqBytes)
 		return nil, fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -97,10 +97,14 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 
 	httpResp, err := httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("发送HTTP请求失败: %v, request: %s", err, reqBytes)
+		vlog.Errorf("Failed to send HTTP request: %v, request: %s", err, reqBytes)
 		return nil, fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
-	defer httpResp.Body.Close()
+	defer func() {
+		if closeErr := httpResp.Body.Close(); closeErr != nil {
+			vlog.Errorf("Failed to close response body: %v", closeErr)
+		}
+	}()
 
 	// 检查状态码
 	if httpResp.StatusCode != http.StatusOK {
@@ -126,14 +130,14 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 		// 解析响应以检查错误
 		var resp Response
 		if err = json.Unmarshal(respBytes, &resp); err != nil {
-			vlog.Errorf("解析响应失败: %v, body: %s", err, respBytes)
+			vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
 			return response, fmt.Errorf("解析响应失败: %w", err)
 		}
 
 		// 验证签名
 		respMap, err := c.responseToMap(resp)
 		if err != nil {
-			vlog.Errorf("转换响应为map失败: %v, body: %s", err, respBytes)
+			vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
 			return response, fmt.Errorf("转换响应为map失败: %w", err)
 		}
 
