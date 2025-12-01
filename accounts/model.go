@@ -16,14 +16,3 @@
  */
 
 package accounts
-
-// Account 企业账户信息
-type Account struct {
-	CrowdsourcingCode string `json:"crowdsourcingCode"` // 众包编号
-	CrowdsourcingName string `json:"crowdsourcingName"` // 众包企业名称
-	AccountNo         string `json:"accountNo"`         // 企业账户编号
-	AccountName       string `json:"accountName"`       // 企业账户名称
-	TotalBalance      string `json:"totalBalance"`      // 企业账户余额（元）
-	Balance           string `json:"balance"`           // 企业可用余额（元）
-	FrozenAmount      string `json:"frozenAmount"`      // 企业冻结余额（元）
-}

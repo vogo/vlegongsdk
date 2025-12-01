@@ -19,6 +19,8 @@ package accounts
 
 import (
 	"fmt"
+
+	"github.com/vogo/vogo/vstrconv"
 )
 
 // BalanceQueryRequest 余额查询请求
@@ -27,18 +29,56 @@ type BalanceQueryRequest struct {
 	CrowdsourcingCode string `json:"crowdsourcingCode"` // 众包企业编码
 }
 
+// BalancAccountData 企业账户信息
+type BalancAccountData struct {
+	CrowdsourcingCode string `json:"crowdsourcingCode"` // 众包编号
+	CrowdsourcingName string `json:"crowdsourcingName"` // 众包企业名称
+	AccountNo         string `json:"accountNo"`         // 企业账户编号
+	AccountName       string `json:"accountName"`       // 企业账户名称
+	TotalBalance      string `json:"totalBalance"`      // 企业账户余额（元）
+	Balance           string `json:"balance"`           // 企业可用余额（元）
+	FrozenAmount      string `json:"frozenAmount"`      // 企业冻结余额（元）
+}
+
 // BalanceQueryResponse 余额查询响应
 type BalanceQueryResponse struct {
-	AccountList []Account `json:"accountList"` // 企业账户列表
+	AccountList []BalancAccountData `json:"accountList"` // 企业账户列表
+}
+
+type BalancAccount struct {
+	CrowdsourcingCode string  `json:"crowdsourcingCode"` // 众包编号
+	CrowdsourcingName string  `json:"crowdsourcingName"` // 众包企业名称
+	AccountNo         string  `json:"accountNo"`         // 企业账户编号
+	AccountName       string  `json:"accountName"`       // 企业账户名称
+	TotalBalance      float64 `json:"totalBalance"`      // 企业账户余额（元）
+	Balance           float64 `json:"balance"`           // 企业可用余额（元）
+	FrozenAmount      float64 `json:"frozenAmount"`      // 企业冻结余额（元）
+}
+
+func DataToAccount(data BalancAccountData) *BalancAccount {
+	return &BalancAccount{
+		CrowdsourcingCode: data.CrowdsourcingCode,
+		CrowdsourcingName: data.CrowdsourcingName,
+		AccountNo:         data.AccountNo,
+		AccountName:       data.AccountName,
+		TotalBalance:      vstrconv.Float64(data.TotalBalance),
+		Balance:           vstrconv.Float64(data.Balance),
+		FrozenAmount:      vstrconv.Float64(data.FrozenAmount),
+	}
 }
 
 // BalanceQuery 查询企业余额
-func (s *AccountService) BalanceQuery(req *BalanceQueryRequest) (*BalanceQueryResponse, error) {
+func (s *AccountService) BalanceQuery(req *BalanceQueryRequest) ([]*BalancAccount, error) {
 	var resp BalanceQueryResponse
 	err := s.client.DoRequest("/settlement/accountApi/balanceQuery", req, &resp)
 	if err != nil {
 		return nil, fmt.Errorf("查询企业余额失败: %w", err)
 	}
 
-	return &resp, nil
+	accounts := make([]*BalancAccount, 0, len(resp.AccountList))
+	for _, account := range resp.AccountList {
+		accounts = append(accounts, DataToAccount(account))
+	}
+
+	return accounts, nil
 }

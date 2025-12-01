@@ -45,22 +45,22 @@ func balanceQueryExample(service *accounts.AccountService) {
 	}
 
 	// 调用余额查询接口
-	resp, err := service.BalanceQuery(req)
+	accounts, err := service.BalanceQuery(req)
 	if err != nil {
 		vlog.Errorf("查询企业余额失败: %v\n", err)
 		return
 	}
 
 	// 处理响应
-	fmt.Printf("查询到 %d 个账户:\n", len(resp.AccountList))
-	for i, account := range resp.AccountList {
+	fmt.Printf("查询到 %d 个账户:\n", len(accounts))
+	for i, account := range accounts {
 		fmt.Printf("\n账户 %d:\n", i+1)
 		fmt.Printf("  众包编号: %s\n", account.CrowdsourcingCode)
 		fmt.Printf("  众包企业名称: %s\n", account.CrowdsourcingName)
 		fmt.Printf("  账户编号: %s\n", account.AccountNo)
 		fmt.Printf("  账户名称: %s\n", account.AccountName)
-		fmt.Printf("  账户总余额: %s 元\n", account.TotalBalance)
-		fmt.Printf("  可用余额: %s 元\n", account.Balance)
-		fmt.Printf("  冻结余额: %s 元\n", account.FrozenAmount)
+		fmt.Printf("  账户总余额: %.2f 元\n", account.TotalBalance)
+		fmt.Printf("  可用余额: %.2f 元\n", account.Balance)
+		fmt.Printf("  冻结余额: %.2f 元\n", account.FrozenAmount)
 	}
 }
