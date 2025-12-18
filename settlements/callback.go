@@ -76,18 +76,18 @@ func (h *PaymentCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 
 	// 解析回调请求
 	var callbackReq PaymentCallbackRequest
-	if err := cores.DecodeCallbackRequest(h.client, r, &callbackReq); err != nil {
-		vlog.Errorf("Failed to parse payment callback request: %v", err)
-		http.Error(w, fmt.Sprintf("解析支付回调请求失败: %v", err), http.StatusBadRequest)
-		return
-	}
+    if err := cores.DecodeCallbackRequest(h.client, r, &callbackReq); err != nil {
+        vlog.Errorf("failed to parse payment callback request | err: %v", err)
+        http.Error(w, fmt.Sprintf("解析支付回调请求失败: %v", err), http.StatusBadRequest)
+        return
+    }
 
 	// 处理回调请求
-	if err := h.handler.HandleCallback(&callbackReq); err != nil {
-		vlog.Errorf("Failed to handle payment callback request: %v", err)
-		http.Error(w, fmt.Sprintf("处理支付回调请求失败: %v", err), http.StatusInternalServerError)
-		return
-	}
+    if err := h.handler.HandleCallback(&callbackReq); err != nil {
+        vlog.Errorf("failed to handle payment callback request | err: %v", err)
+        http.Error(w, fmt.Sprintf("处理支付回调请求失败: %v", err), http.StatusInternalServerError)
+        return
+    }
 
 	// 返回成功响应
 	cores.WriteCallbackResponse(w)

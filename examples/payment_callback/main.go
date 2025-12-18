@@ -38,52 +38,52 @@ func main() {
 	service := settlements.NewSettlementService(client, callbackHandler)
 
 	// 获取支付回调处理器
-	paymentCallbackHandler := service.GetPaymentCallbackHandler()
-	if paymentCallbackHandler == nil {
-		vlog.Fatal("Payment callback handler is empty")
-	}
+    paymentCallbackHandler := service.GetPaymentCallbackHandler()
+    if paymentCallbackHandler == nil {
+        vlog.Fatal("payment callback handler is empty")
+    }
 
 	// 注册HTTP处理器
 	http.Handle("/api/callback/payment", paymentCallbackHandler)
 
 	// 启动HTTP服务器
 	port := 8080
-	vlog.Infof("Starting HTTP server, listening on port: %d", port)
-	vlog.Infof("Payment callback URL: http://localhost:%d/api/callback/payment", port)
-	vlog.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+    vlog.Infof("starting http server | port: %d", port)
+    vlog.Infof("payment callback url | url: http://localhost:%d/api/callback/payment", port)
+    vlog.Fatalf("http server error | err: %v", http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
 // handlePaymentCallback 处理支付回调
 func handlePaymentCallback(data *settlements.PaymentCallbackRequest) error {
 	// 处理支付回调
-	vlog.Infof("Received payment callback: OrderNo=%s, ExternalOrderNo=%s, Status=%s, Amount=%.2f, ArrivalAmount=%.2f, CompletionTime=%s",
-		data.OrderNo,
-		data.OutOrderNo,
-		data.Status,
-		data.Amount,
-		data.ReceivedAmount,
-		data.SuccessTime,
-	)
+    vlog.Infof("received payment callback | order_no: %s | out_order_no: %s | status: %s | amount: %.2f | received_amount: %.2f | success_time: %s",
+        data.OrderNo,
+        data.OutOrderNo,
+        data.Status,
+        data.Amount,
+        data.ReceivedAmount,
+        data.SuccessTime,
+    )
 
 	// 根据支付状态进行业务处理
 	switch data.Status {
 	case "S": // 支付成功
 		log.Println("支付成功，更新业务状态")
 		// 可以在这里添加业务逻辑，如更新数据库中的支付状态
-		vlog.Infof("Payment channel: %d, Tax fee: %.2f, Service fee bearer: %s",
-			data.PayChannel,
-			data.Tax,
-			settlements.GetBearWayDesc(data.ServiceChargeBearWay),
-		)
+        vlog.Infof("payment success detail | pay_channel: %d | tax: %.2f | service_fee_bearer: %s",
+            data.PayChannel,
+            data.Tax,
+            settlements.GetBearWayDesc(data.ServiceChargeBearWay),
+        )
 	case "F": // 支付失败
 		log.Println("支付失败，需要排查原因")
 		// 可以在这里添加业务逻辑
-		vlog.Infof("Failure reason: %s", data.Desc)
+        vlog.Infof("payment failed | reason: %s", data.Desc)
 	case "P": // 处理中
 		log.Println("支付处理中，等待最终结果")
 		// 可以在这里添加业务逻辑
 	default:
-		vlog.Infof("Unknown payment status: %s", data.Status)
+        vlog.Infof("unknown payment status | status: %s", data.Status)
 	}
 
 	return nil

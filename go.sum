@@ -1,8 +1,12 @@
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMTY=
-github.com/vogo/vogo v0.0.0-20250616054728-98448017d355 h1:c2iUM4+Ac1iKuecre3WncLdycbqQ9AmZ7Q5X1esqdFk=
-github.com/vogo/vogo v0.0.0-20250616054728-98448017d355/go.mod h1:gaCplto8XOVoHbN9nAGpEnqDT1s6hnNbfDpH0acra9c=
+github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/vogo/vogo v0.0.0-20251218094335-59c7237680bc h1:OgZPPy7nVHJ6Tl7AZ8j/hLjLyub01TekgienN3rc0Pc=
+github.com/vogo/vogo v0.0.0-20251218094335-59c7237680bc/go.mod h1:VRv2Yyfl28FU6qRzzDvPP+eqqLhcqNrxQ5YGhknSvvk=
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie2QXMNeKRTHCNY2nXvo=
+gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

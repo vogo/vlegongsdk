@@ -67,7 +67,7 @@ func NewClient(config *Config) (*Client, error) {
 
 // DoRequest 发送请求并处理响应
 func (c *Client) DoRequest(path string, reqData interface{}, respData interface{}) error {
-	vlog.Infof("legong request, path: %s, body: %s", path, vjson.EnsureMarshal(reqData))
+	vlog.Infof("legong request | path: %s | body: %s", path, vjson.EnsureMarshal(reqData))
 
 	// 创建请求
 	req := NewRequest(c.config)
@@ -112,7 +112,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
 	if err != nil {
-		vlog.Errorf("Failed to create HTTP request: %v, request: %s", err, reqBytes)
+		vlog.Errorf("failed to create http request | body: %s | err: %v", reqBytes, err)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -120,12 +120,12 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 
 	httpResp, err := c.httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("Failed to send HTTP request: %v, request: %s", err, reqBytes)
+		vlog.Errorf("failed to send http request | body: %s | err: %v", reqBytes, err)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
 	defer func() {
 		if closeErr := httpResp.Body.Close(); closeErr != nil {
-			vlog.Errorf("Failed to close response body: %v", closeErr)
+			vlog.Errorf("failed to close response body | err: %v", closeErr)
 		}
 	}()
 
@@ -136,14 +136,14 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	}
 
 	if httpResp.StatusCode != http.StatusOK {
-		vlog.Errorf("response status: %s, body: %s", httpResp.Status, respBytes)
+		vlog.Errorf("response status error | status: %s | body: %s", httpResp.Status, respBytes)
 		return fmt.Errorf("请求失败: %s", httpResp.Status)
 	}
 
 	// 解析响应
 	var resp Response
 	if err = json.Unmarshal(respBytes, &resp); err != nil {
-		vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
+		vlog.Errorf("failed to parse response | body: %s | err: %v", respBytes, err)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
 	// 检查响应码
@@ -154,13 +154,13 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
 	if err != nil {
-		vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
+		vlog.Errorf("failed to convert response to map | body: %s | err: %v", respBytes, err)
 		return fmt.Errorf("转换响应为map失败: %w", err)
 	}
 
 	signStr = BuildSignString(respMap)
 	if err := Verify(signStr, resp.Head.Sign, c.platformKey); err != nil {
-		vlog.Errorf("Failed to verify signature: %v, response: %s, signStr: %s", err, respBytes, signStr)
+		vlog.Errorf("failed to verify signature | response: %s | sign_str: %s | err: %v", respBytes, signStr, err)
 		return fmt.Errorf("验证签名失败: %w", err)
 	}
 
@@ -168,22 +168,22 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 		// 解密响应数据
 		decryptedData, err := Decrypt(resp.Body.Data, c.privateKey)
 		if err != nil {
-			vlog.Errorf("Failed to decrypt response data: %v, data: %s", err, resp.Body.Data)
+			vlog.Errorf("failed to decrypt response data | data: %s | err: %v", resp.Body.Data, err)
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
-		vlog.Infof("legong response, path: %s, body: %s", path, decryptedData)
+		vlog.Infof("legong response | path: %s | body: %s", path, decryptedData)
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
-			vlog.Errorf("Failed to parse decrypted data: %v, data: %s", err, decryptedData)
+			vlog.Errorf("failed to parse decrypted data | data: %s | err: %v", decryptedData, err)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
 
 		return nil
 	}
 
-	vlog.Infof("legong response, path: %s, code: %s, msg: %s", path, resp.Body.Code, resp.Body.Msg)
+	vlog.Infof("legong response | path: %s | code: %s | msg: %s", path, resp.Body.Code, resp.Body.Msg)
 
 	return nil
 }

@@ -49,11 +49,11 @@ func DecodeCallbackRequest[T any](client *Client, r *http.Request, data *T) erro
 	}
 	defer func() {
 		if closeErr := r.Body.Close(); closeErr != nil {
-			vlog.Errorf("Failed to close request body: %v", closeErr)
+			vlog.Errorf("failed to close request body | err: %v", closeErr)
 		}
 	}()
 
-	vlog.Infof("Received callback request: %s", string(body))
+	vlog.Infof("received callback request | body: %s", string(body))
 
 	// 解析请求
 	var req Request
@@ -78,7 +78,7 @@ func DecodeCallbackRequest[T any](client *Client, r *http.Request, data *T) erro
 		return fmt.Errorf("解密请求数据失败: %w", err)
 	}
 
-	vlog.Infof("decrypted callback data: %s", decryptedData)
+	vlog.Infof("decrypted callback data | data: %s", decryptedData)
 
 	// 解析解密后的数据
 	if err := json.Unmarshal([]byte(decryptedData), data); err != nil {

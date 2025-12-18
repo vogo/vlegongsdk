@@ -32,7 +32,7 @@ import (
 
 // DoMultipartRequestWithBytes 使用字节数组发送multipart/form-data请求并处理响应
 func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, fileBytes []byte, fileName string, respData interface{}) error {
-	vlog.Infof("DoMultipartRequestWithBytes path: %s, reqData: %s, fileName: %s", path, vjson.EnsureMarshal(reqData), fileName)
+	vlog.Infof("do_multipart_request_with_bytes | path: %s | body: %s | file_name: %s", path, vjson.EnsureMarshal(reqData), fileName)
 
 	// 创建请求
 	req := NewRequest(c.config)
@@ -112,7 +112,7 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 	// 创建HTTP请求
 	httpReq, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		vlog.Errorf("Failed to create HTTP request: %v", err)
+		vlog.Errorf("failed to create http request | err: %v", err)
 		return fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -125,12 +125,12 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 
 	httpResp, err := httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("Failed to send HTTP request: %v", err)
+		vlog.Errorf("failed to send http request | err: %v", err)
 		return fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
 	defer func() {
 		if closeErr := httpResp.Body.Close(); closeErr != nil {
-			vlog.Errorf("Failed to close response body: %v", closeErr)
+			vlog.Errorf("failed to close response body | err: %v", closeErr)
 		}
 	}()
 
@@ -141,21 +141,21 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 	}
 
 	if httpResp.StatusCode != http.StatusOK {
-		vlog.Errorf("response status: %s, body: %s", httpResp.Status, respBytes)
+		vlog.Errorf("response status error | status: %s | body: %s", httpResp.Status, respBytes)
 		return fmt.Errorf("请求失败: %s", httpResp.Status)
 	}
 
 	// 解析响应
 	var resp Response
 	if err = json.Unmarshal(respBytes, &resp); err != nil {
-		vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
+		vlog.Errorf("failed to parse response | body: %s | err: %v", respBytes, err)
 		return fmt.Errorf("解析响应失败: %w", err)
 	}
 
 	// 验证签名
 	respMap, err := c.responseToMap(resp)
 	if err != nil {
-		vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
+		vlog.Errorf("failed to convert response to map | body: %s | err: %v", respBytes, err)
 		return fmt.Errorf("转换响应为map失败: %w", err)
 	}
 
@@ -173,15 +173,15 @@ func (c *Client) DoMultipartRequestWithBytes(path string, reqData interface{}, f
 		// 解密响应数据
 		decryptedData, err := Decrypt(resp.Body.Data, c.privateKey)
 		if err != nil {
-			vlog.Errorf("Failed to decrypt response data: %v, data: %s", err, resp.Body.Data)
+			vlog.Errorf("failed to decrypt response data | data: %s | err: %v", resp.Body.Data, err)
 			return fmt.Errorf("解密响应数据失败: %w", err)
 		}
 
-		vlog.Infof("DoMultipartRequestWithBytes respData: %s", decryptedData)
+		vlog.Infof("do_multipart_request_with_bytes | resp_data: %s", decryptedData)
 
 		// 解析解密后的数据
 		if err := json.Unmarshal([]byte(decryptedData), respData); err != nil {
-			vlog.Errorf("Failed to parse decrypted data: %v, data: %s", err, decryptedData)
+			vlog.Errorf("failed to parse decrypted data | data: %s | err: %v", decryptedData, err)
 			return fmt.Errorf("解析解密后的数据失败: %w", err)
 		}
 	}

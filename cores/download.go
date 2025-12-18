@@ -40,7 +40,7 @@ type FileDownloadResponse struct {
 
 // DoFileDownloadRequest 发送文件下载请求并处理响应
 func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileDownloadResponse, error) {
-	vlog.Infof("DoFileDownloadRequest path: %s, reqData: %v", path, reqData)
+	vlog.Infof("do_file_download_request | path: %s | req_data: %v", path, reqData)
 
 	// 创建请求
 	req := NewRequest(c.config)
@@ -85,7 +85,7 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 
 	httpReq, err := http.NewRequest("POST", reqUrl, bytes.NewBuffer(reqBytes))
 	if err != nil {
-		vlog.Errorf("Failed to create HTTP request: %v, request: %s", err, reqBytes)
+		vlog.Errorf("failed to create http request | body: %s | err: %v", reqBytes, err)
 		return nil, fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
 
@@ -97,18 +97,18 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 
 	httpResp, err := httpClient.Do(httpReq)
 	if err != nil {
-		vlog.Errorf("Failed to send HTTP request: %v, request: %s", err, reqBytes)
+		vlog.Errorf("failed to send http request | body: %s | err: %v", reqBytes, err)
 		return nil, fmt.Errorf("发送HTTP请求失败: %w", err)
 	}
 	defer func() {
 		if closeErr := httpResp.Body.Close(); closeErr != nil {
-			vlog.Errorf("Failed to close response body: %v", closeErr)
+			vlog.Errorf("failed to close response body | err: %v", closeErr)
 		}
 	}()
 
 	// 检查状态码
 	if httpResp.StatusCode != http.StatusOK {
-		vlog.Errorf("response status: %s", httpResp.Status)
+		vlog.Errorf("response status error | status: %s", httpResp.Status)
 		return nil, fmt.Errorf("请求失败: %s", httpResp.Status)
 	}
 
@@ -130,14 +130,14 @@ func (c *Client) DoFileDownloadRequest(path string, reqData interface{}) (*FileD
 		// 解析响应以检查错误
 		var resp Response
 		if err = json.Unmarshal(respBytes, &resp); err != nil {
-			vlog.Errorf("Failed to parse response: %v, body: %s", err, respBytes)
+			vlog.Errorf("failed to parse response | body: %s | err: %v", respBytes, err)
 			return response, fmt.Errorf("解析响应失败: %w", err)
 		}
 
 		// 验证签名
 		respMap, err := c.responseToMap(resp)
 		if err != nil {
-			vlog.Errorf("Failed to convert response to map: %v, body: %s", err, respBytes)
+			vlog.Errorf("failed to convert response to map | body: %s | err: %v", respBytes, err)
 			return response, fmt.Errorf("转换响应为map失败: %w", err)
 		}
 

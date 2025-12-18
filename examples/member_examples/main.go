@@ -65,11 +65,11 @@ func registerExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	resp, err := memberService.Register(req)
-	if err != nil {
-		vlog.Infof("Failed to register member: %v\n", err)
-		return
-	}
+    resp, err := memberService.Register(req)
+    if err != nil {
+        vlog.Errorf("failed to register member | company_code: %s | freelancer_name: %s | err: %v", req.CompanyCode, req.FreelancerName, err)
+        return
+    }
 
 	// 打印响应
 	fmt.Printf("注册成功，用工人员编号: %d\n", resp.FreelancerID)
@@ -91,11 +91,11 @@ func getInfoExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	resp, err := memberService.GetInfo(req)
-	if err != nil {
-		vlog.Infof("Failed to query member info: %v\n", err)
-		return
-	}
+    resp, err := memberService.GetInfo(req)
+    if err != nil {
+        vlog.Errorf("failed to query member info | company_code: %s | freelancer_id: %d | err: %v", req.CompanyCode, req.FreelancerID, err)
+        return
+    }
 
 	// 打印响应
 	fmt.Printf("用工人员编号: %d\n", resp.FreelancerID)
@@ -119,11 +119,11 @@ func addBankCardExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	err := memberService.AddBankCard(req)
-	if err != nil {
-		vlog.Infof("Failed to bind bank card: %v\n", err)
-		return
-	}
+    err := memberService.AddBankCard(req)
+    if err != nil {
+        vlog.Errorf("failed to bind bank card | company_code: %s | id_card_no: %s | bank_card_no: %s | err: %v", req.CompanyCode, req.IDCardNo, req.BankCardNo, err)
+        return
+    }
 
 	fmt.Println("绑定银行卡成功")
 }
@@ -138,11 +138,11 @@ func unbindBankCardExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	err := memberService.UnbindBankCard(req)
-	if err != nil {
-		vlog.Infof("Failed to unbind bank card: %v\n", err)
-		return
-	}
+    err := memberService.UnbindBankCard(req)
+    if err != nil {
+        vlog.Errorf("failed to unbind bank card | company_code: %s | id_card_no: %s | bank_card_no: %s | err: %v", req.CompanyCode, req.IDCardNo, req.BankCardNo, err)
+        return
+    }
 
 	fmt.Println("解绑银行卡成功")
 }
@@ -158,11 +158,11 @@ func idCardAuthExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	err := memberService.IDCardAuth(req)
-	if err != nil {
-		vlog.Infof("Failed to collect member ID card: %v\n", err)
-		return
-	}
+    err := memberService.IDCardAuth(req)
+    if err != nil {
+        vlog.Errorf("failed to collect member id card | freelancer_id: %d | front_img_id: %s | back_img_id: %s | err: %v", req.FreelancerID, req.FrontImgID, req.BackImgID, err)
+        return
+    }
 
 	fmt.Println("采集用工人员身份证成功")
 }
@@ -176,11 +176,11 @@ func dismissExample(memberService *members.MemberService) {
 	}
 
 	// 发送请求
-	resp, err := memberService.Dismiss(req)
-	if err != nil {
-		vlog.Infof("Failed to dismiss member: %v\n", err)
-		return
-	}
+    resp, err := memberService.Dismiss(req)
+    if err != nil {
+        vlog.Errorf("failed to dismiss member | company_code: %s | freelancer_id: %d | err: %v", req.CompanyCode, req.FreelancerID, err)
+        return
+    }
 
 	// 打印响应
 	fmt.Printf("用工人员编号: %d\n", resp.FreelancerID)

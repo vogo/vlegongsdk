@@ -36,10 +36,10 @@ func main() {
 	)
 
 	// 创建客户端
-	client, err := cores.NewClient(config)
-	if err != nil {
-		vlog.Fatalf("Failed to create client: %v", err)
-	}
+    client, err := cores.NewClient(config)
+    if err != nil {
+        vlog.Fatalf("failed to create client | err: %v", err)
+    }
 
 	// 创建系统服务
 	systemService := systems.NewSystemService(client)
@@ -51,10 +51,10 @@ func main() {
 	}
 
 	// 调用实名认证接口
-	resp, err := systemService.IdentityAuth(req)
-	if err != nil {
-		vlog.Fatalf("Real name authentication failed: %v", err)
-	}
+    resp, err := systemService.IdentityAuth(req)
+    if err != nil {
+        vlog.Fatalf("real name authentication failed | name: %s | id_card_no: %s | err: %v", req.Name, req.IDCardNo, err)
+    }
 
 	// 处理响应
 	fmt.Printf("认证状态: %s\n", resp.AuthStatus)
