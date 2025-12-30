@@ -49,11 +49,11 @@ func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService,
 	fmt.Printf("上传完工附件文件: %s\n", filePath)
 
 	// 上传文件
-    fileResp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeCompletionProof)
-    if err != nil {
-        vlog.Errorf("failed to upload completion attachment file | file_path: %s | file_type: %d | err: %v", filePath, systems.FileTypeCompletionProof, err)
-        return
-    }
+	fileResp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeCompletionProof)
+	if err != nil {
+		vlog.Errorf("failed to upload completion attachment file | file_path: %s | file_type: %d | err: %v", filePath, systems.FileTypeCompletionProof, err)
+		return
+	}
 
 	fmt.Printf("文件上传成功，文件ID: %s\n", fileResp.FileID)
 
@@ -68,11 +68,11 @@ func uploadAndSubmitCompletionProofExample(systemService *systems.SystemService,
 	}
 
 	// 调用提交完工附件接口
-    err = proofsService.SubmitCompletionProof(req)
-    if err != nil {
-        vlog.Errorf("failed to submit completion attachment | order_no: %s | file_id: %s | err: %v", req.OrderNo, req.FileID, err)
-        return
-    }
+	err = proofsService.SubmitCompletionProof(req)
+	if err != nil {
+		vlog.Errorf("failed to submit completion attachment | order_no: %s | file_id: %s | err: %v", req.OrderNo, req.FileID, err)
+		return
+	}
 
 	fmt.Println("提交完工附件成功")
 }

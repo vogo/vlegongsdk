@@ -45,11 +45,11 @@ func balanceQueryExample(service *accounts.AccountService) {
 	}
 
 	// 调用余额查询接口
-    accounts, err := service.BalanceQuery(req)
-    if err != nil {
-        vlog.Errorf("查询企业余额失败 | err: %v", err)
-        return
-    }
+	accounts, err := service.BalanceQuery(req)
+	if err != nil {
+		vlog.Errorf("查询企业余额失败 | err: %v", err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("查询到 %d 个账户:\n", len(accounts))

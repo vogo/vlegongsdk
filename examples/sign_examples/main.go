@@ -36,10 +36,10 @@ func main() {
 	)
 
 	// 创建客户端
-    client, err := cores.NewClient(config)
-    if err != nil {
-        vlog.Fatalf("failed to create client | err: %v", err)
-    }
+	client, err := cores.NewClient(config)
+	if err != nil {
+		vlog.Fatalf("failed to create client | err: %v", err)
+	}
 
 	// 创建结算服务
 	SignService := signs.NewSignService(client, nil)
@@ -68,11 +68,11 @@ func startSignExample(service *signs.SignService) {
 	}
 
 	// 调用自主签约接口
-    resp, err := service.StartSign(req)
-    if err != nil {
-        vlog.Errorf("failed to initiate autonomous signing | project_code: %s | id_card_no: %s | err: %v", req.ProjectCode, req.IDCardNo, err)
-        return
-    }
+	resp, err := service.StartSign(req)
+	if err != nil {
+		vlog.Errorf("failed to initiate autonomous signing | project_code: %s | id_card_no: %s | err: %v", req.ProjectCode, req.IDCardNo, err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("签约流程ID: %s\n", resp.SignFlowID)
@@ -104,11 +104,11 @@ func querySignExample(service *signs.SignService) {
 	}
 
 	// 调用签约查询接口
-    resp, err := service.QuerySign(req)
-    if err != nil {
-        vlog.Errorf("failed to query signing status | sign_flow_id: %s | err: %v", req.SignFlowID, err)
-        return
-    }
+	resp, err := service.QuerySign(req)
+	if err != nil {
+		vlog.Errorf("failed to query signing status | sign_flow_id: %s | err: %v", req.SignFlowID, err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("签约流程ID: %s\n", resp.SignFlowID)
@@ -128,11 +128,11 @@ func querySignRecordExample(service *signs.SignService) {
 	}
 
 	// 调用签约记录查询接口
-    resp, err := service.QuerySignRecord(req)
-    if err != nil {
-        vlog.Errorf("failed to query signing records | id_card_no: %s | company_code: %s | project_code: %s | err: %v", req.IDCardNo, req.CompanyCode, req.ProjectCode, err)
-        return
-    }
+	resp, err := service.QuerySignRecord(req)
+	if err != nil {
+		vlog.Errorf("failed to query signing records | id_card_no: %s | company_code: %s | project_code: %s | err: %v", req.IDCardNo, req.CompanyCode, req.ProjectCode, err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("找到 %d 条签约记录\n", len(resp.SignRecordList))

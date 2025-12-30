@@ -38,31 +38,31 @@ func main() {
 	service := signs.NewSignService(client, callbackHandler)
 
 	// 获取签约回调处理器
-    signCallbackHandler := service.GetSignCallbackHandler()
-    if signCallbackHandler == nil {
-        vlog.Fatal("sign callback handler is empty")
-    }
+	signCallbackHandler := service.GetSignCallbackHandler()
+	if signCallbackHandler == nil {
+		vlog.Fatal("sign callback handler is empty")
+	}
 
 	// 注册HTTP处理器
 	http.Handle("/api/callback/sign", signCallbackHandler)
 
 	// 启动HTTP服务器
 	port := 8080
-    vlog.Infof("starting http server | port: %d", port)
-    vlog.Infof("sign callback url | url: http://localhost:%d/api/callback/sign", port)
-    vlog.Fatalf("http server error | err: %v", http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+	vlog.Infof("starting http server | port: %d", port)
+	vlog.Infof("sign callback url | url: http://localhost:%d/api/callback/sign", port)
+	vlog.Fatalf("http server error | err: %v", http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
 // handleSignCallback 处理签约回调
 func handleSignCallback(data signs.SignCallbackRequest) error {
 	// 处理签约回调
-    vlog.Infof("received sign callback | sign_flow_id: %s | sign_status: %d | sign_status_desc: %s | sign_end_time: %s | sign_desc: %s",
-        data.SignFlowID,
-        data.SignStatus,
-        signs.GetSignStatusDesc(data.SignStatus),
-        data.SignEndTime,
-        data.SignDesc,
-    )
+	vlog.Infof("received sign callback | sign_flow_id: %s | sign_status: %d | sign_status_desc: %s | sign_end_time: %s | sign_desc: %s",
+		data.SignFlowID,
+		data.SignStatus,
+		signs.GetSignStatusDesc(data.SignStatus),
+		data.SignEndTime,
+		data.SignDesc,
+	)
 
 	// 根据签约状态进行业务处理
 	switch data.SignStatus {
@@ -82,7 +82,7 @@ func handleSignCallback(data signs.SignCallbackRequest) error {
 		log.Println("签约失败，需要排查原因")
 		// 可以在这里添加业务逻辑
 	default:
-        vlog.Infof("unknown sign status | status: %d", data.SignStatus)
+		vlog.Infof("unknown sign status | status: %d", data.SignStatus)
 	}
 
 	return nil

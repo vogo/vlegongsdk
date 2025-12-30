@@ -61,11 +61,11 @@ func payExample(service *settlements.SettlementService) {
 	}
 
 	// 调用支付接口
-    resp, err := service.Pay(req)
-    if err != nil {
-        vlog.Errorf("pay request failed | out_order_no: %s | amount: %.2f | err: %v", outOrderNo, amount, err)
-        return
-    }
+	resp, err := service.Pay(req)
+	if err != nil {
+		vlog.Errorf("pay request failed | out_order_no: %s | amount: %.2f | err: %v", outOrderNo, amount, err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("平台订单号: %s\n", resp.OrderNo)
@@ -122,11 +122,11 @@ func queryOrderExample(service *settlements.SettlementService) {
 	}
 
 	// 调用订单查询接口
-    resp, err := service.QueryOrder(req)
-    if err != nil {
-        vlog.Errorf("failed to query order | out_order_no: %s | err: %v", req.OutOrderNo, err)
-        return
-    }
+	resp, err := service.QueryOrder(req)
+	if err != nil {
+		vlog.Errorf("failed to query order | out_order_no: %s | err: %v", req.OutOrderNo, err)
+		return
+	}
 
 	// 处理响应
 	fmt.Printf("平台订单号: %s\n", resp.OrderNo)

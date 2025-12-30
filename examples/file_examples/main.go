@@ -38,10 +38,10 @@ func main() {
 	)
 
 	// 创建客户端
-    client, err := cores.NewClient(config)
-    if err != nil {
-        vlog.Fatalf("failed to create client | err: %v", err)
-    }
+	client, err := cores.NewClient(config)
+	if err != nil {
+		vlog.Fatalf("failed to create client | err: %v", err)
+	}
 
 	// 创建系统服务
 	systemService := systems.NewSystemService(client)
@@ -62,11 +62,11 @@ func uploadFileExample(systemService *systems.SystemService) {
 	fmt.Printf("从文件路径上传: %s\n", filePath)
 
 	// 上传文件
-    resp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeIDCard)
-    if err != nil {
-        vlog.Errorf("failed to upload file | file_path: %s | file_type: %d | err: %v", filePath, systems.FileTypeIDCard, err)
-        return
-    }
+	resp, err := systemService.UploadFileFromPath(filePath, systems.FileTypeIDCard)
+	if err != nil {
+		vlog.Errorf("failed to upload file | file_path: %s | file_type: %d | err: %v", filePath, systems.FileTypeIDCard, err)
+		return
+	}
 
 	// 打印响应
 	fmt.Printf("上传成功，文件ID: %s\n", resp.FileID)
@@ -87,10 +87,10 @@ func downloadFileExample(systemService *systems.SystemService) {
 	savePath := vos.EnsureEnvString("DOWNLOAD_FILE_PATH")
 
 	// 下载文件
-    err := systemService.DownloadFile(fileID, savePath)
-    if err != nil {
-        vlog.Errorf("failed to download file | file_id: %s | save_path: %s | err: %v", fileID, savePath, err)
-    } else {
-        println("下载成功")
-    }
+	err := systemService.DownloadFile(fileID, savePath)
+	if err != nil {
+		vlog.Errorf("failed to download file | file_id: %s | save_path: %s | err: %v", fileID, savePath, err)
+	} else {
+		println("下载成功")
+	}
 }
