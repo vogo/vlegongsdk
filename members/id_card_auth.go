@@ -17,8 +17,6 @@
 
 package members
 
-import "fmt"
-
 // IDCardAuthRequest 采集用工人员身份证请求
 type IDCardAuthRequest struct {
 	FreelancerID int    `json:"freelancerId"` // 用工人员编号
@@ -32,7 +30,7 @@ func (s *MemberService) IDCardAuth(req *IDCardAuthRequest) error {
 	// 该接口没有返回具体数据，只需要处理可能的错误
 	err := s.client.DoRequest("/member/freelancerApi/idCardAuth", req, nil)
 	if err != nil {
-		return fmt.Errorf("采集用工人员身份证失败: %w", err)
+		return err
 	}
 
 	return nil

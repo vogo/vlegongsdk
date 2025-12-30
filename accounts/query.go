@@ -18,8 +18,6 @@
 package accounts
 
 import (
-	"fmt"
-
 	"github.com/vogo/vogo/vstrconv"
 )
 
@@ -72,7 +70,7 @@ func (s *AccountService) BalanceQuery(req *BalanceQueryRequest) ([]*BalancAccoun
 	var resp BalanceQueryResponse
 	err := s.client.DoRequest("/settlement/accountApi/balanceQuery", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询企业余额失败: %w", err)
+		return nil, err
 	}
 
 	accounts := make([]*BalancAccount, 0, len(resp.AccountList))

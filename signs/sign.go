@@ -17,8 +17,6 @@
 
 package signs
 
-import "fmt"
-
 // StartSignRequest 自主签约请求
 type StartSignRequest struct {
 	ProjectCode  string `json:"projectCode"`  // 项目编号
@@ -44,7 +42,7 @@ func (s *SignService) StartSign(req *StartSignRequest) (*StartSignResponse, erro
 	var resp StartSignResponse
 	err := s.client.DoRequest("/settlement/signApi/startSign", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("发起自主签约失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

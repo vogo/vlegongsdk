@@ -17,8 +17,6 @@
 
 package members
 
-import "fmt"
-
 // RegisterRequest 用工人员注册请求
 type RegisterRequest struct {
 	CompanyCode    string `json:"companyCode"`              // 企业编码，用工企业在乐工平台的编码
@@ -44,7 +42,7 @@ func (s *MemberService) Register(req *RegisterRequest) (*RegisterResponse, error
 	var resp RegisterResponse
 	err := s.client.DoRequest("/member/freelancerSpecialApi/register", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("注册用工人员失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

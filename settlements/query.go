@@ -18,10 +18,6 @@
 // Package settlements 提供结算相关功能
 package settlements
 
-import (
-	"fmt"
-)
-
 // QueryOrderRequest 订单查询请求
 type QueryOrderRequest struct {
 	OutOrderNo string `json:"outOrderNo"` // 外部订单号
@@ -32,7 +28,7 @@ func (s *SettlementService) QueryOrder(req *QueryOrderRequest) (*Order, error) {
 	var resp Order
 	err := s.client.DoRequest("/settlement/settleApi/query", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询订单失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

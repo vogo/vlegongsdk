@@ -17,10 +17,6 @@
 
 package settlements
 
-import (
-	"fmt"
-)
-
 // PreCalculateRequest 试算税费请求
 type PreCalculateRequest struct {
 	ProjectCode string  `json:"projectCode"` // 项目编号
@@ -58,7 +54,7 @@ func (s *SettlementService) PreCalculate(req *PreCalculateRequest) (*PreCalculat
 	var resp PreCalculateResponse
 	err := s.client.DoRequest("/settlement/taxApi/preCalculate", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("试算税费失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

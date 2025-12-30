@@ -17,10 +17,6 @@
 
 package settlements
 
-import (
-	"fmt"
-)
-
 // PayRequest 支付请求
 type PayRequest struct {
 	AccountNo   string  `json:"accountNo"`   // 银行卡号
@@ -39,7 +35,7 @@ func (s *SettlementService) Pay(req *PayRequest) (*Order, error) {
 	var resp Order
 	err := s.client.DoRequest("/settlement/settleApi/pay", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("发起支付失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

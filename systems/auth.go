@@ -17,8 +17,6 @@
 
 package systems
 
-import "fmt"
-
 // IdentityAuthRequest 实名认证请求
 type IdentityAuthRequest struct {
 	Name     string `json:"name"`     // 姓名
@@ -37,7 +35,7 @@ func (s *SystemService) IdentityAuth(req *IdentityAuthRequest) (*IdentityAuthRes
 	var resp IdentityAuthResponse
 	err := s.client.DoRequest("/sys/authApi/iden", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("实名认证失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

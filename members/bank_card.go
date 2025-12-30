@@ -17,8 +17,6 @@
 
 package members
 
-import "fmt"
-
 // AddBankCardRequest 绑定银行卡请求
 type AddBankCardRequest struct {
 	CompanyCode string `json:"companyCode"` // 用工企业编码
@@ -32,7 +30,7 @@ func (s *MemberService) AddBankCard(req *AddBankCardRequest) error {
 	// 该接口没有返回具体数据，只需要处理可能的错误
 	err := s.client.DoRequest("/member/freelancerApi/addBankCard", req, nil)
 	if err != nil {
-		return fmt.Errorf("绑定银行卡失败: %w", err)
+		return err
 	}
 
 	return nil
@@ -50,7 +48,7 @@ func (s *MemberService) UnbindBankCard(req *UnbindBankCardRequest) error {
 	// 该接口没有返回具体数据，只需要处理可能的错误
 	err := s.client.DoRequest("/member/freelancerApi/unbindBankCard", req, nil)
 	if err != nil {
-		return fmt.Errorf("解绑银行卡失败: %w", err)
+		return err
 	}
 
 	return nil

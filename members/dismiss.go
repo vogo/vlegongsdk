@@ -17,8 +17,6 @@
 
 package members
 
-import "fmt"
-
 // DismissRequest 用工人员注销请求
 type DismissRequest struct {
 	CompanyCode  string `json:"companyCode"`  // 企业编码，用工企业在乐工平台的编码
@@ -37,7 +35,7 @@ func (s *MemberService) Dismiss(req *DismissRequest) (*DismissResponse, error) {
 	var resp DismissResponse
 	err := s.client.DoRequest("/member/freelancerSpecialApi/dismiss", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("注销用工人员失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

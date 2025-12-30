@@ -17,10 +17,6 @@
 
 package proofs
 
-import (
-	"fmt"
-)
-
 // SubmitCompletionProofRequest 提交完工附件请求
 type SubmitCompletionProofRequest struct {
 	OrderNo string `json:"orderNo"` // 支付返回的订单号
@@ -32,7 +28,7 @@ type SubmitCompletionProofRequest struct {
 func (s *ProofService) SubmitCompletionProof(req *SubmitCompletionProofRequest) error {
 	err := s.client.DoRequest("/settlement/completionProofApi/submit", req, nil)
 	if err != nil {
-		return fmt.Errorf("提交完工附件失败: %w", err)
+		return err
 	}
 
 	return nil

@@ -17,8 +17,6 @@
 
 package signs
 
-import "fmt"
-
 // QuerySignRecordRequest 签约记录查询请求
 type QuerySignRecordRequest struct {
 	IDCardNo    string `json:"idCard"`      // 用工人员身份证号
@@ -51,7 +49,7 @@ func (s *SignService) QuerySignRecord(req *QuerySignRecordRequest) (*QuerySignRe
 	var resp QuerySignRecordResponse
 	err := s.client.DoRequest("/settlement/signApi/querySignRecord", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询签约记录失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

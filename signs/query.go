@@ -17,8 +17,6 @@
 
 package signs
 
-import "fmt"
-
 // QuerySignRequest 签约查询请求
 type QuerySignRequest struct {
 	SignFlowID string `json:"signFlowId"` // 签约流程ID
@@ -37,7 +35,7 @@ func (s *SignService) QuerySign(req *QuerySignRequest) (*QuerySignResponse, erro
 	var resp QuerySignResponse
 	err := s.client.DoRequest("/settlement/signApi/query", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询签约状态失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

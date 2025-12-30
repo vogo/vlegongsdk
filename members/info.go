@@ -17,8 +17,6 @@
 
 package members
 
-import "fmt"
-
 // InfoRequest 根据id查询用工人员请求
 type InfoRequest struct {
 	CompanyCode  string `json:"companyCode"`  // 企业编码，用工企业在乐工平台的编码
@@ -41,7 +39,7 @@ func (s *MemberService) GetInfo(req *InfoRequest) (*InfoResponse, error) {
 	var resp InfoResponse
 	err := s.client.DoRequest("/member/freelancerSpecialApi/info", req, &resp)
 	if err != nil {
-		return nil, fmt.Errorf("查询用工人员信息失败: %w", err)
+		return nil, err
 	}
 
 	return &resp, nil

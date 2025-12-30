@@ -29,7 +29,7 @@ type APIError struct {
 
 // Error 实现error接口
 func (e *APIError) Error() string {
-	return fmt.Sprintf("API错误: %s - %s", e.Code, e.Message)
+	return fmt.Sprintf("%s: %s", e.Code, e.Message)
 }
 
 // NewAPIError 创建一个新的API错误

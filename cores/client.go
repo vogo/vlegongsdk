@@ -148,7 +148,7 @@ func (c *Client) DoRequest(path string, reqData interface{}, respData interface{
 	}
 	// 检查响应码
 	if resp.Body.Code != "00000" {
-		return fmt.Errorf("请求失败: %s - %s", resp.Body.Code, resp.Body.Msg)
+		return NewAPIError(resp.Body.Code, resp.Body.Msg)
 	}
 
 	// 验证签名
